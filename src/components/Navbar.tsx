@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Globe, User, Check } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import NotificationBell from './NotificationBell';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -87,6 +88,9 @@ const Navbar = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
+            {/* Notifications */}
+            <NotificationBell />
+
             {/* Language Dropdown */}
             <div className="relative" ref={langRef}>
               <motion.button

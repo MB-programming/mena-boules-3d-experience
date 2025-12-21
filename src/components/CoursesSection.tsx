@@ -1,5 +1,6 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Play, Clock, Users, BookOpen, Star, ChevronRight, GraduationCap } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { GlowIcon, FloatIcon } from './AnimatedIcon';
@@ -218,17 +219,13 @@ const CoursesSection = () => {
                       </div>
                     </div>
                     
-                    <motion.a
-                      href={course.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      whileHover={{ scale: 1.05, x: 5 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="flex items-center gap-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm"
+                    <Link
+                      to={`/course/${course.id}`}
+                      className="flex items-center gap-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:scale-105 transition-transform"
                     >
                       {t('courses.enroll')}
                       <ChevronRight className="w-4 h-4" />
-                    </motion.a>
+                    </Link>
                   </div>
                 </div>
               </div>
