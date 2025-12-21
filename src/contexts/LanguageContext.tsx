@@ -15,7 +15,8 @@ const translations = {
     'nav.home': 'Home',
     'nav.about': 'About',
     'nav.skills': 'Skills',
-    'nav.projects': 'Projects',
+    'nav.projects': 'Portfolio',
+    'nav.courses': 'Courses',
     'nav.contact': 'Contact',
     
     // Hero
@@ -38,10 +39,25 @@ const translations = {
     'skills.subtitle': 'Technologies I work with',
     
     // Projects
-    'projects.title': 'Featured Projects',
-    'projects.subtitle': 'Some of my recent work',
+    'projects.title': 'My Portfolio',
+    'projects.subtitle': 'Explore my creative work',
     'projects.view': 'View Project',
     'projects.code': 'View Code',
+    'projects.all': 'All',
+    'projects.websites': 'Websites',
+    'projects.uiux': 'UI/UX Design',
+    'projects.apps': 'Applications',
+    'projects.preview': 'Live Preview',
+    'projects.details': 'View Details',
+    
+    // Courses
+    'courses.title': 'My Courses',
+    'courses.subtitle': 'Learn from my experience',
+    'courses.students': 'Students',
+    'courses.hours': 'Hours',
+    'courses.lessons': 'Lessons',
+    'courses.enroll': 'Enroll Now',
+    'courses.preview': 'Preview',
     
     // Contact
     'contact.title': 'Get In Touch',
@@ -59,7 +75,8 @@ const translations = {
     'nav.home': 'الرئيسية',
     'nav.about': 'عني',
     'nav.skills': 'المهارات',
-    'nav.projects': 'المشاريع',
+    'nav.projects': 'أعمالي',
+    'nav.courses': 'الكورسات',
     'nav.contact': 'تواصل',
     
     // Hero
@@ -82,10 +99,25 @@ const translations = {
     'skills.subtitle': 'التقنيات التي أعمل بها',
     
     // Projects
-    'projects.title': 'مشاريع مميزة',
-    'projects.subtitle': 'بعض أعمالي الأخيرة',
+    'projects.title': 'أعمالي',
+    'projects.subtitle': 'استكشف أعمالي الإبداعية',
     'projects.view': 'عرض المشروع',
     'projects.code': 'عرض الكود',
+    'projects.all': 'الكل',
+    'projects.websites': 'مواقع',
+    'projects.uiux': 'تصميم UI/UX',
+    'projects.apps': 'تطبيقات',
+    'projects.preview': 'معاينة مباشرة',
+    'projects.details': 'عرض التفاصيل',
+    
+    // Courses
+    'courses.title': 'كورساتي',
+    'courses.subtitle': 'تعلم من خبرتي',
+    'courses.students': 'طالب',
+    'courses.hours': 'ساعة',
+    'courses.lessons': 'درس',
+    'courses.enroll': 'سجل الآن',
+    'courses.preview': 'معاينة',
     
     // Contact
     'contact.title': 'تواصل معي',
