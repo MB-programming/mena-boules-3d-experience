@@ -12,11 +12,16 @@ import {
   CheckCircle,
   ChevronLeft,
   ChevronRight,
-  BookOpen,
+  Download,
+  FileText,
+  Video,
+  Link as LinkIcon,
   MessageCircle,
-  FileText
+  ThumbsUp,
+  Send
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import { GlowIcon } from '@/components/AnimatedIcon';
 
 const lessons = [
   { id: 1, title: 'Course Introduction', duration: '5:30', completed: true },
@@ -28,14 +33,88 @@ const lessons = [
   { id: 7, title: 'Forms and Inputs', duration: '18:45', completed: false },
 ];
 
+const resources = [
+  { id: 1, type: 'pdf', title: 'Lesson Notes - Web Development Basics', size: '2.4 MB', url: '#' },
+  { id: 2, type: 'zip', title: 'Project Starter Files', size: '15 MB', url: '#' },
+  { id: 3, type: 'link', title: 'MDN Web Docs - HTML Guide', url: 'https://developer.mozilla.org/en-US/docs/Web/HTML' },
+  { id: 4, type: 'video', title: 'Bonus: Quick Tips for Beginners', duration: '5:20', url: '#' },
+];
+
+const questions = [
+  { 
+    id: 1, 
+    user: 'Ahmed M.', 
+    avatar: 'https://ui-avatars.com/api/?name=Ahmed+M&background=random',
+    question: 'What is the difference between div and span elements?',
+    date: '2 days ago',
+    likes: 12,
+    replies: [
+      { 
+        id: 1, 
+        user: 'Mena Boules', 
+        avatar: 'https://minaboules.com/wp-content/uploads/2025/10/mena-profile.png',
+        answer: 'Great question! div is a block-level element while span is inline. div takes full width and creates a new line, span only takes the space it needs.',
+        date: '1 day ago',
+        isInstructor: true
+      }
+    ]
+  },
+  { 
+    id: 2, 
+    user: 'Sara K.', 
+    avatar: 'https://ui-avatars.com/api/?name=Sara+K&background=random',
+    question: 'Do I need to learn all HTML tags or just the common ones?',
+    date: '1 week ago',
+    likes: 8,
+    replies: []
+  },
+  { 
+    id: 3, 
+    user: 'Mohamed A.', 
+    avatar: 'https://ui-avatars.com/api/?name=Mohamed+A&background=random',
+    question: 'What code editor do you recommend for beginners?',
+    date: '2 weeks ago',
+    likes: 15,
+    replies: [
+      { 
+        id: 1, 
+        user: 'Mena Boules', 
+        avatar: 'https://minaboules.com/wp-content/uploads/2025/10/mena-profile.png',
+        answer: 'I highly recommend VS Code! It\'s free, powerful, and has great extensions for web development.',
+        date: '2 weeks ago',
+        isInstructor: true
+      }
+    ]
+  },
+];
+
 const CourseWatch = () => {
   const { id, lessonId } = useParams();
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [currentLesson, setCurrentLesson] = useState(3);
   const [progress, setProgress] = useState(35);
+  const [activeTab, setActiveTab] = useState<'overview' | 'resources' | 'qa'>('overview');
+  const [newQuestion, setNewQuestion] = useState('');
 
   const lesson = lessons[currentLesson - 1];
+
+  const getResourceIcon = (type: string) => {
+    switch (type) {
+      case 'pdf': return FileText;
+      case 'zip': return Download;
+      case 'video': return Video;
+      case 'link': return LinkIcon;
+      default: return FileText;
+    }
+  };
+
+  const handleAskQuestion = () => {
+    if (newQuestion.trim()) {
+      // In a real app, this would submit to the backend
+      setNewQuestion('');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -144,24 +223,171 @@ const CourseWatch = () => {
 
               {/* Tabs */}
               <div className="flex gap-4 border-b border-border mb-6">
-                <button className="pb-3 px-1 border-b-2 border-primary text-primary font-medium">
+                <button 
+                  onClick={() => setActiveTab('overview')}
+                  className={`pb-3 px-1 border-b-2 font-medium transition-colors ${
+                    activeTab === 'overview' 
+                      ? 'border-primary text-primary' 
+                      : 'border-transparent text-muted-foreground hover:text-foreground'
+                  }`}
+                >
                   Overview
                 </button>
-                <button className="pb-3 px-1 text-muted-foreground hover:text-foreground">
+                <button 
+                  onClick={() => setActiveTab('resources')}
+                  className={`pb-3 px-1 border-b-2 font-medium transition-colors ${
+                    activeTab === 'resources' 
+                      ? 'border-primary text-primary' 
+                      : 'border-transparent text-muted-foreground hover:text-foreground'
+                  }`}
+                >
                   Resources
                 </button>
-                <button className="pb-3 px-1 text-muted-foreground hover:text-foreground">
+                <button 
+                  onClick={() => setActiveTab('qa')}
+                  className={`pb-3 px-1 border-b-2 font-medium transition-colors ${
+                    activeTab === 'qa' 
+                      ? 'border-primary text-primary' 
+                      : 'border-transparent text-muted-foreground hover:text-foreground'
+                  }`}
+                >
                   Q&A
                 </button>
               </div>
 
-              <div className="prose prose-invert max-w-none">
-                <p className="text-muted-foreground">
-                  In this lesson, you'll learn the fundamentals of web development and understand how 
-                  websites work. We'll cover the client-server model, HTTP protocols, and the role of 
-                  HTML, CSS, and JavaScript in creating web pages.
-                </p>
-              </div>
+              {/* Tab Content */}
+              {activeTab === 'overview' && (
+                <div className="prose prose-invert max-w-none">
+                  <p className="text-muted-foreground">
+                    In this lesson, you'll learn the fundamentals of web development and understand how 
+                    websites work. We'll cover the client-server model, HTTP protocols, and the role of 
+                    HTML, CSS, and JavaScript in creating web pages.
+                  </p>
+                </div>
+              )}
+
+              {activeTab === 'resources' && (
+                <div className="space-y-3">
+                  {resources.map((resource) => {
+                    const Icon = getResourceIcon(resource.type);
+                    return (
+                      <motion.a
+                        key={resource.id}
+                        href={resource.url}
+                        target={resource.type === 'link' ? '_blank' : undefined}
+                        rel={resource.type === 'link' ? 'noopener noreferrer' : undefined}
+                        whileHover={{ scale: 1.01, x: 5 }}
+                        className="glass-card p-4 flex items-center gap-4 hover-glow cursor-pointer block"
+                      >
+                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                          <GlowIcon Icon={Icon} size={24} />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium">{resource.title}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {resource.size || resource.duration || 'External Link'}
+                          </p>
+                        </div>
+                        <Download className="w-5 h-5 text-muted-foreground" />
+                      </motion.a>
+                    );
+                  })}
+                </div>
+              )}
+
+              {activeTab === 'qa' && (
+                <div className="space-y-6">
+                  {/* Ask Question */}
+                  <div className="glass-card p-4">
+                    <div className="flex gap-3">
+                      <img
+                        src="https://ui-avatars.com/api/?name=User&background=random"
+                        alt="User"
+                        className="w-10 h-10 rounded-full"
+                      />
+                      <div className="flex-1">
+                        <textarea
+                          value={newQuestion}
+                          onChange={(e) => setNewQuestion(e.target.value)}
+                          placeholder="Ask a question about this lesson..."
+                          className="w-full p-3 bg-input rounded-lg border border-border text-sm resize-none"
+                          rows={2}
+                        />
+                        <div className="flex justify-end mt-2">
+                          <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={handleAskQuestion}
+                            className="btn-primary flex items-center gap-2 text-sm py-2 px-4"
+                          >
+                            <Send className="w-4 h-4" />
+                            Ask Question
+                          </motion.button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Questions List */}
+                  {questions.map((q) => (
+                    <div key={q.id} className="glass-card p-4 space-y-4">
+                      <div className="flex gap-3">
+                        <img
+                          src={q.avatar}
+                          alt={q.user}
+                          className="w-10 h-10 rounded-full"
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-medium text-sm">{q.user}</span>
+                            <span className="text-xs text-muted-foreground">{q.date}</span>
+                          </div>
+                          <p className="text-sm">{q.question}</p>
+                          <div className="flex items-center gap-4 mt-2">
+                            <button className="flex items-center gap-1 text-muted-foreground hover:text-primary text-sm">
+                              <ThumbsUp className="w-4 h-4" />
+                              {q.likes}
+                            </button>
+                            <button className="flex items-center gap-1 text-muted-foreground hover:text-primary text-sm">
+                              <MessageCircle className="w-4 h-4" />
+                              {q.replies.length} replies
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Replies */}
+                      {q.replies.length > 0 && (
+                        <div className="ml-12 space-y-3">
+                          {q.replies.map((reply) => (
+                            <div key={reply.id} className="glass-card p-3 bg-primary/5">
+                              <div className="flex gap-3">
+                                <img
+                                  src={reply.avatar}
+                                  alt={reply.user}
+                                  className="w-8 h-8 rounded-full"
+                                />
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className="font-medium text-sm">{reply.user}</span>
+                                    {reply.isInstructor && (
+                                      <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary text-xs">
+                                        Instructor
+                                      </span>
+                                    )}
+                                    <span className="text-xs text-muted-foreground">{reply.date}</span>
+                                  </div>
+                                  <p className="text-sm text-muted-foreground">{reply.answer}</p>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Mark Complete Button */}
               <motion.button

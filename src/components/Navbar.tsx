@@ -15,7 +15,7 @@ const Navbar = () => {
     { key: 'nav.services', href: '/services' },
     { key: 'nav.projects', href: '/projects' },
     { key: 'nav.courses', href: '/courses' },
-    { key: 'nav.about', href: isHomePage ? '#about' : '/#about' },
+    { key: 'nav.about', href: '/about' },
     { key: 'nav.contact', href: isHomePage ? '#contact' : '/#contact' },
   ];
 
