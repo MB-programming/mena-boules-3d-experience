@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-type Language = 'en' | 'ar';
+type Language = 'en' | 'ar' | 'de';
 
 interface LanguageContextType {
   language: Language;
@@ -18,6 +18,7 @@ const translations = {
     'nav.skills': 'Skills',
     'nav.projects': 'Works',
     'nav.courses': 'Courses',
+    'nav.blog': 'Blog',
     'nav.contact': 'Say Hello',
     
     // Hero
@@ -84,6 +85,21 @@ const translations = {
     'courses.enroll': 'Enroll Now',
     'courses.preview': 'Preview',
     
+    // Blog
+    'blog.title': 'Blog',
+    'blog.subtitle': 'Insights, tutorials and stories',
+    'blog.readMore': 'Read More',
+    'blog.backToBlog': 'Back to Blog',
+    'blog.minRead': 'min read',
+    'blog.share': 'Share',
+    'blog.relatedPosts': 'Related Posts',
+    'blog.categories': 'Categories',
+    'blog.allPosts': 'All Posts',
+    'blog.search': 'Search articles...',
+    'blog.noResults': 'No articles found',
+    'blog.author': 'Author',
+    'blog.publishedOn': 'Published on',
+    
     // Contact
     'contact.title': "It's time to talk about your project",
     'contact.subtitle': "Let's embark on creative journey together by shaping a visual narrative of your brand in the crowded digital space.",
@@ -98,6 +114,46 @@ const translations = {
     // Footer
     'footer.rights': 'All rights reserved.',
     'footer.cta': "Let's work together!",
+    
+    // Auth
+    'auth.login': 'Login',
+    'auth.signup': 'Sign Up',
+    'auth.email': 'Email',
+    'auth.password': 'Password',
+    'auth.name': 'Full Name',
+    
+    // Profile
+    'profile.title': 'My Profile',
+    'profile.wallet': 'Wallet',
+    'profile.wishlist': 'Wishlist',
+    'profile.certificates': 'Certificates',
+    'profile.myCourses': 'My Courses',
+    'profile.settings': 'Settings',
+    'profile.logout': 'Logout',
+    
+    // Checkout
+    'checkout.title': 'Checkout',
+    'checkout.orderSummary': 'Order Summary',
+    'checkout.paymentMethod': 'Payment Method',
+    'checkout.wallet': 'Wallet',
+    'checkout.instapay': 'InstaPay',
+    'checkout.vodafone': 'Vodafone Cash',
+    'checkout.confirmPayment': 'Confirm Payment',
+    'checkout.transactionRef': 'Transaction Reference',
+    'checkout.copyNumber': 'Copy Number',
+    'checkout.total': 'Total',
+    
+    // Common
+    'common.loading': 'Loading...',
+    'common.error': 'Error',
+    'common.success': 'Success',
+    'common.cancel': 'Cancel',
+    'common.save': 'Save',
+    'common.delete': 'Delete',
+    'common.edit': 'Edit',
+    'common.view': 'View',
+    'common.buy': 'Buy',
+    'common.free': 'Free',
   },
   ar: {
     // Navigation
@@ -107,6 +163,7 @@ const translations = {
     'nav.skills': 'المهارات',
     'nav.projects': 'أعمالي',
     'nav.courses': 'الكورسات',
+    'nav.blog': 'المدونة',
     'nav.contact': 'تواصل',
     
     // Hero
@@ -173,6 +230,21 @@ const translations = {
     'courses.enroll': 'سجل الآن',
     'courses.preview': 'معاينة',
     
+    // Blog
+    'blog.title': 'المدونة',
+    'blog.subtitle': 'رؤى ودروس وقصص',
+    'blog.readMore': 'اقرأ المزيد',
+    'blog.backToBlog': 'العودة للمدونة',
+    'blog.minRead': 'دقيقة قراءة',
+    'blog.share': 'مشاركة',
+    'blog.relatedPosts': 'مقالات ذات صلة',
+    'blog.categories': 'التصنيفات',
+    'blog.allPosts': 'جميع المقالات',
+    'blog.search': 'البحث في المقالات...',
+    'blog.noResults': 'لا توجد مقالات',
+    'blog.author': 'الكاتب',
+    'blog.publishedOn': 'نُشر في',
+    
     // Contact
     'contact.title': 'حان الوقت للحديث عن مشروعك',
     'contact.subtitle': 'لننطلق في رحلة إبداعية معًا من خلال تشكيل سرد بصري لعلامتك التجارية في الفضاء الرقمي المزدحم.',
@@ -187,6 +259,191 @@ const translations = {
     // Footer
     'footer.rights': 'جميع الحقوق محفوظة.',
     'footer.cta': 'لنعمل معًا!',
+    
+    // Auth
+    'auth.login': 'تسجيل الدخول',
+    'auth.signup': 'إنشاء حساب',
+    'auth.email': 'البريد الإلكتروني',
+    'auth.password': 'كلمة المرور',
+    'auth.name': 'الاسم الكامل',
+    
+    // Profile
+    'profile.title': 'ملفي الشخصي',
+    'profile.wallet': 'المحفظة',
+    'profile.wishlist': 'المفضلة',
+    'profile.certificates': 'الشهادات',
+    'profile.myCourses': 'كورساتي',
+    'profile.settings': 'الإعدادات',
+    'profile.logout': 'تسجيل الخروج',
+    
+    // Checkout
+    'checkout.title': 'إتمام الشراء',
+    'checkout.orderSummary': 'ملخص الطلب',
+    'checkout.paymentMethod': 'طريقة الدفع',
+    'checkout.wallet': 'المحفظة',
+    'checkout.instapay': 'إنستا باي',
+    'checkout.vodafone': 'فودافون كاش',
+    'checkout.confirmPayment': 'تأكيد الدفع',
+    'checkout.transactionRef': 'رقم المعاملة',
+    'checkout.copyNumber': 'نسخ الرقم',
+    'checkout.total': 'الإجمالي',
+    
+    // Common
+    'common.loading': 'جاري التحميل...',
+    'common.error': 'خطأ',
+    'common.success': 'نجاح',
+    'common.cancel': 'إلغاء',
+    'common.save': 'حفظ',
+    'common.delete': 'حذف',
+    'common.edit': 'تعديل',
+    'common.view': 'عرض',
+    'common.buy': 'شراء',
+    'common.free': 'مجاني',
+  },
+  de: {
+    // Navigation
+    'nav.home': 'Startseite',
+    'nav.services': 'Dienstleistungen',
+    'nav.about': 'Über mich',
+    'nav.skills': 'Fähigkeiten',
+    'nav.projects': 'Arbeiten',
+    'nav.courses': 'Kurse',
+    'nav.blog': 'Blog',
+    'nav.contact': 'Kontakt',
+    
+    // Hero
+    'hero.greeting': 'Hallo, ich bin',
+    'hero.name': 'Mena Boules',
+    'hero.title': 'Preisgekrönter Branding-Experte',
+    'hero.subtitle': 'Spezialisiert auf die Erstellung einzigartiger visueller Identitäten für digitale Produkte. Ich glaube, dass großartiges Design mit gemeinsamen Werten, offener Kommunikation und Respekt für Ihr Publikum beginnt.',
+    'hero.cta': 'Portfolio ansehen',
+    'hero.contact': 'Kontakt aufnehmen',
+    
+    // Services
+    'services.title': 'Dienstleistungen',
+    'services.subtitle': 'Was ich für Sie tun kann',
+    'services.uiux.title': 'UI/UX Design',
+    'services.uiux.desc': 'Gestaltung moderner, benutzerfreundlicher Oberflächen und nahtloser Erlebnisse, die Kreativität mit Funktionalität verbinden.',
+    'services.webdev.title': 'Webentwicklung',
+    'services.webdev.desc': 'Erstellung responsiver, leistungsstarker Websites mit WordPress und anderen CMS-Plattformen, maßgeschneidert auf Kundenbedürfnisse.',
+    'services.custom.title': 'Anpassung & Wartung',
+    'services.custom.desc': 'Anpassung von Themes, Plugins und kontinuierlicher Support für reibungslose und skalierbare Website-Leistung.',
+    'services.security.title': 'Problemlösung & Sicherheit',
+    'services.security.desc': 'Lösungen für technische Probleme, Leistungsoptimierung und Absicherung von Websites gegen Schwachstellen.',
+    'services.coding.title': 'Individuelle Programmierung & Web-Apps',
+    'services.coding.desc': 'Entwicklung maßgeschneiderter Webanwendungen und privater Programmierlösungen für einzigartige Geschäftsanforderungen.',
+    'services.systems.title': 'Systeme & Infrastruktur',
+    'services.systems.desc': 'Verwaltung von Systemen und Servern für zuverlässige Leistung, Skalierbarkeit und Sicherheit.',
+    
+    // About
+    'about.title': 'Über mich',
+    'about.greeting': 'Hallo',
+    'about.iam': 'Ich bin',
+    'about.fullname': 'Mena Boules Fouad',
+    'about.description': 'Ich bin ein engagierter und leidenschaftlicher Programmierer mit über 5 Jahren Erfahrung in der Webentwicklung. Im Laufe meiner Karriere war ich an der Entwicklung und Wartung verschiedener Anwendungen und Websites beteiligt. Ich verfüge über starke Fähigkeiten in Programmiersprachen wie JavaScript und bin in der Lage, innovative und effiziente Softwarelösungen für komplexe Probleme zu entwerfen und umzusetzen.',
+    'about.description2': 'Ich lerne lebenslang und bin den Prinzipien der Softwareentwicklung und Best Practices verpflichtet. Ich bin eine selbstständige Person, die sowohl unabhängig als auch im Team hervorragende Leistungen erbringt. Ich bin stolz auf meine Arbeit und strebe stets nach Exzellenz in allem, was ich tue.',
+    'about.experience': 'Jahre Erfahrung',
+    'about.projects': 'Abgeschlossene Projekte',
+    'about.clients': 'Zufriedene Kunden',
+    'about.resume': 'Lebenslauf ansehen',
+    'about.hire': 'Kontakt aufnehmen',
+    
+    // Skills
+    'skills.title': 'Fähigkeiten & Technologien',
+    'skills.subtitle': 'Technologien, mit denen ich arbeite',
+    
+    // Projects
+    'projects.title': 'Arbeiten',
+    'projects.subtitle': 'Entdecken Sie meine kreativen Arbeiten',
+    'projects.view': 'Projekt ansehen',
+    'projects.code': 'Code ansehen',
+    'projects.all': 'Alle',
+    'projects.branding': 'Branding',
+    'projects.product': 'Produkt',
+    'projects.websites': 'Websites',
+    'projects.uiux': 'UX/UI',
+    'projects.apps': 'Anwendungen',
+    'projects.preview': 'Live-Vorschau',
+    'projects.details': 'Details ansehen',
+    
+    // Courses
+    'courses.title': 'Meine Kurse',
+    'courses.subtitle': 'Lernen Sie aus meiner Erfahrung',
+    'courses.students': 'Studenten',
+    'courses.hours': 'Stunden',
+    'courses.lessons': 'Lektionen',
+    'courses.enroll': 'Jetzt anmelden',
+    'courses.preview': 'Vorschau',
+    
+    // Blog
+    'blog.title': 'Blog',
+    'blog.subtitle': 'Einblicke, Tutorials und Geschichten',
+    'blog.readMore': 'Weiterlesen',
+    'blog.backToBlog': 'Zurück zum Blog',
+    'blog.minRead': 'Min. Lesezeit',
+    'blog.share': 'Teilen',
+    'blog.relatedPosts': 'Ähnliche Beiträge',
+    'blog.categories': 'Kategorien',
+    'blog.allPosts': 'Alle Beiträge',
+    'blog.search': 'Artikel suchen...',
+    'blog.noResults': 'Keine Artikel gefunden',
+    'blog.author': 'Autor',
+    'blog.publishedOn': 'Veröffentlicht am',
+    
+    // Contact
+    'contact.title': 'Zeit, über Ihr Projekt zu sprechen',
+    'contact.subtitle': 'Lassen Sie uns gemeinsam eine kreative Reise beginnen, indem wir eine visuelle Geschichte Ihrer Marke im überfüllten digitalen Raum gestalten.',
+    'contact.name': 'Ihr Name',
+    'contact.email': 'Ihre E-Mail',
+    'contact.message': 'Ihre Nachricht',
+    'contact.send': 'Nachricht senden',
+    'contact.phone': 'Telefon',
+    'contact.whatsapp': 'WhatsApp',
+    'contact.address': 'Adresse',
+    
+    // Footer
+    'footer.rights': 'Alle Rechte vorbehalten.',
+    'footer.cta': 'Lass uns zusammenarbeiten!',
+    
+    // Auth
+    'auth.login': 'Anmelden',
+    'auth.signup': 'Registrieren',
+    'auth.email': 'E-Mail',
+    'auth.password': 'Passwort',
+    'auth.name': 'Vollständiger Name',
+    
+    // Profile
+    'profile.title': 'Mein Profil',
+    'profile.wallet': 'Geldbörse',
+    'profile.wishlist': 'Wunschliste',
+    'profile.certificates': 'Zertifikate',
+    'profile.myCourses': 'Meine Kurse',
+    'profile.settings': 'Einstellungen',
+    'profile.logout': 'Abmelden',
+    
+    // Checkout
+    'checkout.title': 'Kasse',
+    'checkout.orderSummary': 'Bestellübersicht',
+    'checkout.paymentMethod': 'Zahlungsmethode',
+    'checkout.wallet': 'Geldbörse',
+    'checkout.instapay': 'InstaPay',
+    'checkout.vodafone': 'Vodafone Cash',
+    'checkout.confirmPayment': 'Zahlung bestätigen',
+    'checkout.transactionRef': 'Transaktionsreferenz',
+    'checkout.copyNumber': 'Nummer kopieren',
+    'checkout.total': 'Gesamt',
+    
+    // Common
+    'common.loading': 'Laden...',
+    'common.error': 'Fehler',
+    'common.success': 'Erfolg',
+    'common.cancel': 'Abbrechen',
+    'common.save': 'Speichern',
+    'common.delete': 'Löschen',
+    'common.edit': 'Bearbeiten',
+    'common.view': 'Ansehen',
+    'common.buy': 'Kaufen',
+    'common.free': 'Kostenlos',
   },
 };
 
