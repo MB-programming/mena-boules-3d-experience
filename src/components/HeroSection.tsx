@@ -138,44 +138,83 @@ const HeroSection = () => {
             className="relative flex justify-center lg:justify-end"
           >
             <div className="relative">
-              {/* Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/30 to-secondary/30 rounded-full blur-3xl scale-110" />
+              {/* Outer Glow Ring */}
+              <motion.div 
+                className="absolute -inset-4 rounded-full"
+                style={{
+                  background: 'conic-gradient(from 0deg, hsl(var(--primary)), hsl(var(--secondary)), hsl(var(--primary)))',
+                  filter: 'blur(20px)',
+                  opacity: 0.4,
+                }}
+                animate={{ rotate: 360 }}
+                transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+              />
+              
+              {/* Secondary Glow */}
+              <div className="absolute -inset-8 bg-gradient-radial from-primary/20 via-primary/5 to-transparent rounded-full blur-2xl" />
+              
+              {/* Animated Border Ring */}
+              <motion.div
+                className="absolute -inset-1 rounded-full"
+                style={{
+                  background: 'conic-gradient(from 0deg, hsl(var(--primary)), transparent, hsl(var(--secondary)), transparent, hsl(var(--primary)))',
+                }}
+                animate={{ rotate: -360 }}
+                transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
+              />
               
               {/* Profile Circle */}
               <motion.div 
-                className="relative w-72 h-72 md:w-96 md:h-96 rounded-full overflow-hidden border-4 border-primary/30"
-                animate={{ 
-                  boxShadow: [
-                    '0 0 30px hsl(var(--primary) / 0.3)',
-                    '0 0 60px hsl(var(--primary) / 0.5)',
-                    '0 0 30px hsl(var(--primary) / 0.3)'
-                  ]
+                className="relative w-72 h-72 md:w-96 md:h-96 rounded-full overflow-hidden bg-background"
+                style={{
+                  boxShadow: '0 0 60px hsl(var(--primary) / 0.4), inset 0 0 30px hsl(var(--primary) / 0.1)',
                 }}
-                transition={{ duration: 3, repeat: Infinity }}
               >
-                <img 
-                  src={menaProfile} 
-                  alt="Mena Boules"
-                  className="w-full h-full object-cover"
-                />
+                {/* Inner Border */}
+                <div className="absolute inset-0 rounded-full border-2 border-primary/50 z-10" />
+                
+                {/* Image with gradient overlay */}
+                <div className="relative w-full h-full">
+                  <img 
+                    src={menaProfile} 
+                    alt="Mena Boules"
+                    className="w-full h-full object-cover scale-105 hover:scale-110 transition-transform duration-700"
+                  />
+                  {/* Subtle vignette effect */}
+                  <div className="absolute inset-0 rounded-full shadow-[inset_0_0_50px_rgba(0,0,0,0.3)]" />
+                </div>
               </motion.div>
 
               {/* Floating Labels */}
               <motion.div
-                className="absolute top-1/3 -left-4 px-4 py-2 rounded-lg bg-background/90 backdrop-blur-sm border border-border shadow-lg"
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity }}
+                className="absolute top-1/4 -left-6 px-5 py-2.5 rounded-xl bg-background/95 backdrop-blur-md border border-primary/40 shadow-xl shadow-primary/20"
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                whileHover={{ scale: 1.05 }}
               >
-                <span className="text-sm font-medium">{t('hero.contentCreator')}</span>
+                <span className="text-sm font-semibold text-foreground">{t('hero.contentCreator')}</span>
               </motion.div>
 
               <motion.div
-                className="absolute bottom-1/3 -right-4 px-4 py-2 rounded-lg bg-background/90 backdrop-blur-sm border border-border shadow-lg"
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, delay: 1 }}
+                className="absolute bottom-1/4 -right-6 px-5 py-2.5 rounded-xl bg-background/95 backdrop-blur-md border border-secondary/40 shadow-xl shadow-secondary/20"
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 4, repeat: Infinity, delay: 1, ease: 'easeInOut' }}
+                whileHover={{ scale: 1.05 }}
               >
-                <span className="text-sm font-medium">{t('hero.webDeveloper')}</span>
+                <span className="text-sm font-semibold text-foreground">{t('hero.webDeveloper')}</span>
               </motion.div>
+
+              {/* Decorative Dots */}
+              <motion.div
+                className="absolute -top-2 left-1/2 w-3 h-3 rounded-full bg-primary"
+                animate={{ scale: [1, 1.3, 1], opacity: [0.7, 1, 0.7] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+              <motion.div
+                className="absolute -bottom-2 left-1/2 w-2 h-2 rounded-full bg-secondary"
+                animate={{ scale: [1, 1.3, 1], opacity: [0.7, 1, 0.7] }}
+                transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+              />
             </div>
           </motion.div>
         </div>
