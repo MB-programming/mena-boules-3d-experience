@@ -4,9 +4,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { AnimatedSparkle } from '@/components/AnimatedIcon';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const Auth = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -24,15 +26,15 @@ const Auth = () => {
     // Simulate auth - in real app, connect to Supabase
     setTimeout(() => {
       if (isLogin) {
-        toast.success('Welcome back!');
+        toast.success(t('auth.welcome'));
         navigate('/');
       } else {
         if (formData.password !== formData.confirmPassword) {
-          toast.error('Passwords do not match');
+          toast.error(t('auth.passwordMismatch'));
           setIsLoading(false);
           return;
         }
-        toast.success('Account created successfully!');
+        toast.success(t('auth.accountCreated'));
         setIsLogin(true);
       }
       setIsLoading(false);
@@ -59,7 +61,7 @@ const Auth = () => {
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-8 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Home
+          {t('auth.backToHome')}
         </Link>
 
         {/* Auth Card */}
@@ -75,10 +77,10 @@ const Auth = () => {
               <span className="text-3xl font-display font-bold gradient-text">mina.</span>
             </motion.div>
             <h1 className="text-2xl font-display font-bold mb-2">
-              {isLogin ? 'Welcome Back' : 'Create Account'}
+              {isLogin ? t('auth.welcomeBack') : t('auth.createAccount')}
             </h1>
             <p className="text-muted-foreground">
-              {isLogin ? 'Sign in to access your account' : 'Join us to start learning'}
+              {isLogin ? t('auth.signInAccess') : t('auth.joinUs')}
             </p>
           </div>
 
@@ -89,7 +91,7 @@ const Auth = () => {
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
               >
-                <label className="block text-sm font-medium mb-2">Full Name</label>
+                <label className="block text-sm font-medium mb-2">{t('auth.name')}</label>
                 <div className="relative">
                   <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <input
@@ -97,7 +99,7 @@ const Auth = () => {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full pl-12 pr-4 py-3 rounded-xl bg-input border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
-                    placeholder="Your name"
+                    placeholder={t('auth.yourName')}
                     required={!isLogin}
                   />
                 </div>
@@ -105,7 +107,7 @@ const Auth = () => {
             )}
 
             <div>
-              <label className="block text-sm font-medium mb-2">Email</label>
+              <label className="block text-sm font-medium mb-2">{t('auth.email')}</label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <input
@@ -120,7 +122,7 @@ const Auth = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Password</label>
+              <label className="block text-sm font-medium mb-2">{t('auth.password')}</label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <input
@@ -147,7 +149,7 @@ const Auth = () => {
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
               >
-                <label className="block text-sm font-medium mb-2">Confirm Password</label>
+                <label className="block text-sm font-medium mb-2">{t('auth.confirmPassword')}</label>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <input
@@ -165,7 +167,7 @@ const Auth = () => {
             {isLogin && (
               <div className="flex justify-end">
                 <button type="button" className="text-sm text-primary hover:underline">
-                  Forgot password?
+                  {t('auth.forgotPassword')}
                 </button>
               </div>
             )}
@@ -184,19 +186,19 @@ const Auth = () => {
                   className="inline-block w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full"
                 />
               ) : (
-                isLogin ? 'Sign In' : 'Create Account'
+                isLogin ? t('auth.signIn') : t('auth.createAccount')
               )}
             </motion.button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-muted-foreground">
-              {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
+              {isLogin ? t('auth.noAccount') : t('auth.haveAccount')}{' '}
               <button
                 onClick={() => setIsLogin(!isLogin)}
                 className="text-primary font-medium hover:underline"
               >
-                {isLogin ? 'Sign Up' : 'Sign In'}
+                {isLogin ? t('auth.signup') : t('auth.signIn')}
               </button>
             </p>
           </div>

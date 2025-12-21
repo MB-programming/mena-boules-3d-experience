@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowDown, Github, Linkedin, Mail } from 'lucide-react';
+import { ArrowDown, Github, Linkedin, Mail, Play } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { AnimatedSparkle, AnimatedWave, GlowIcon, FloatIcon } from './AnimatedIcon';
+import { AnimatedSparkle, GlowIcon, FloatIcon } from './AnimatedIcon';
+import VideoPopup from './VideoPopup';
 import menaProfile from '@/assets/mena-profile.png';
 
 const HeroSection = () => {
   const { t } = useLanguage();
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center px-6 pt-20">
@@ -21,7 +24,7 @@ const HeroSection = () => {
             >
               <AnimatedSparkle />
               <span className="text-primary font-medium text-lg md:text-xl">
-                Award Winning Branding Expert
+                {t('hero.title')}
               </span>
             </motion.div>
 
@@ -31,8 +34,8 @@ const HeroSection = () => {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="text-4xl md:text-6xl lg:text-7xl font-display font-bold mb-6"
             >
-              Bring your vision to{' '}
-              <span className="gradient-text glow-text">ultimate reality</span>
+              {t('hero.tagline').split(' ').slice(0, -2).join(' ')}{' '}
+              <span className="gradient-text glow-text">{t('hero.tagline').split(' ').slice(-2).join(' ')}</span>
             </motion.h1>
 
             <motion.p
@@ -53,13 +56,17 @@ const HeroSection = () => {
               <a href="#projects" className="btn-primary">
                 {t('hero.cta')}
               </a>
-              <a 
-                href="mailto:hello@minaboules.com" 
+              <motion.button
+                onClick={() => setIsVideoOpen(true)}
                 className="btn-outline flex items-center gap-2"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <Mail className="w-4 h-4" />
-                hello@minaboules.com
-              </a>
+                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                  <Play className="w-4 h-4 text-primary ml-0.5" fill="currentColor" />
+                </div>
+                {t('hero.watchVideo')}
+              </motion.button>
             </motion.div>
 
             {/* Floating Tags */}
@@ -74,14 +81,14 @@ const HeroSection = () => {
                 animate={{ y: [0, -5, 0] }}
                 transition={{ duration: 3, repeat: Infinity, delay: 0 }}
               >
-                Content Creator
+                {t('hero.contentCreator')}
               </motion.span>
               <motion.span 
                 className="px-4 py-2 rounded-full bg-secondary/10 border border-secondary/30 text-sm font-medium"
                 animate={{ y: [0, -5, 0] }}
                 transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
               >
-                Web Developer
+                {t('hero.webDeveloper')}
               </motion.span>
             </motion.div>
 
@@ -148,7 +155,7 @@ const HeroSection = () => {
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 4, repeat: Infinity }}
               >
-                <span className="text-sm font-medium">Content Creator</span>
+                <span className="text-sm font-medium">{t('hero.contentCreator')}</span>
               </motion.div>
 
               <motion.div
@@ -156,7 +163,7 @@ const HeroSection = () => {
                 animate={{ y: [0, 10, 0] }}
                 transition={{ duration: 4, repeat: Infinity, delay: 1 }}
               >
-                <span className="text-sm font-medium">Web Developer</span>
+                <span className="text-sm font-medium">{t('hero.webDeveloper')}</span>
               </motion.div>
             </div>
           </motion.div>
@@ -179,6 +186,9 @@ const HeroSection = () => {
           </motion.a>
         </motion.div>
       </div>
+
+      {/* Video Popup */}
+      <VideoPopup isOpen={isVideoOpen} onClose={() => setIsVideoOpen(false)} />
     </section>
   );
 };
