@@ -58,14 +58,25 @@ const HeroSection = () => {
               </a>
               <motion.button
                 onClick={() => setIsVideoOpen(true)}
-                className="btn-outline flex items-center gap-2"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                className="group flex items-center gap-3 text-foreground hover:text-primary transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                  <Play className="w-4 h-4 text-primary ml-0.5" fill="currentColor" />
-                </div>
-                {t('hero.watchVideo')}
+                <motion.div 
+                  className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/30"
+                  whileHover={{ scale: 1.1 }}
+                  animate={{ 
+                    boxShadow: [
+                      '0 0 20px hsl(var(--primary) / 0.3)',
+                      '0 0 40px hsl(var(--primary) / 0.5)',
+                      '0 0 20px hsl(var(--primary) / 0.3)'
+                    ]
+                  }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <Play className="w-6 h-6 text-primary-foreground ml-1" fill="currentColor" />
+                </motion.div>
+                <span className="font-medium">{t('hero.watchVideo')}</span>
               </motion.button>
             </motion.div>
 
