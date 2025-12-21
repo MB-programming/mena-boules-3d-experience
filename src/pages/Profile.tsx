@@ -21,7 +21,13 @@ import {
   ShoppingCart,
   Smartphone,
   Copy,
-  Check
+  Check,
+  Lock,
+  Eye,
+  EyeOff,
+  Clock,
+  CheckCircle,
+  XCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
@@ -40,6 +46,12 @@ const Profile = () => {
   const [transactionRef, setTransactionRef] = useState('');
   const [copiedInstapay, setCopiedInstapay] = useState(false);
   const [copiedVodafone, setCopiedVodafone] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
   const [profile, setProfile] = useState({
     name: 'Ahmed Mohamed',
     email: 'ahmed@example.com',
@@ -65,10 +77,36 @@ const Profile = () => {
   ]);
 
   const transactions = [
-    { id: 1, type: 'credit', amount: 100, description: 'Funds Added', date: 'Dec 20, 2024' },
-    { id: 2, type: 'debit', amount: 50, description: 'Course Purchase: React Basics', date: 'Dec 18, 2024' },
-    { id: 3, type: 'credit', amount: 200, description: 'Funds Added', date: 'Dec 15, 2024' },
+    { id: 1, type: 'credit', amount: 100, description: 'Funds Added', date: 'Dec 20, 2024', status: 'completed' },
+    { id: 2, type: 'debit', amount: 50, description: 'Course Purchase: React Basics', date: 'Dec 18, 2024', status: 'completed' },
+    { id: 3, type: 'credit', amount: 200, description: 'Funds Added', date: 'Dec 15, 2024', status: 'completed' },
   ];
+
+  const pendingRequests = [
+    { id: 1, amount: 150, paymentMethod: 'InstaPay', transactionRef: 'TRX123456', date: 'Dec 21, 2024', status: 'pending' },
+    { id: 2, amount: 300, paymentMethod: 'Vodafone Cash', transactionRef: 'TRX789012', date: 'Dec 20, 2024', status: 'reviewing' },
+  ];
+
+  const handleChangePassword = () => {
+    if (!currentPassword) {
+      toast.error(t('profile.enterCurrentPassword'));
+      return;
+    }
+    if (newPassword.length < 8) {
+      toast.error(t('auth.passwordTooShort'));
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      toast.error(t('auth.passwordMismatch'));
+      return;
+    }
+    // Simulate password change
+    toast.success(t('profile.passwordChanged'));
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmNewPassword('');
+    setShowChangePassword(false);
+  };
 
   const handleSave = () => {
     setIsEditing(false);
@@ -421,11 +459,59 @@ const Profile = () => {
                     </motion.div>
                   )}
 
+                  {/* Pending Requests */}
+                  {pendingRequests.length > 0 && (
+                    <div className="mb-6">
+                      <h4 className="font-medium mb-3 flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-yellow-500" />
+                        {t('profile.pendingRequests')}
+                      </h4>
+                      <div className="space-y-2">
+                        {pendingRequests.map((req) => (
+                          <div
+                            key={req.id}
+                            className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={`p-2 rounded-full ${
+                                req.status === 'pending' ? 'bg-yellow-500/20' : 'bg-blue-500/20'
+                              }`}>
+                                {req.status === 'pending' ? (
+                                  <Clock className="w-4 h-4 text-yellow-500" />
+                                ) : (
+                                  <Eye className="w-4 h-4 text-blue-500" />
+                                )}
+                              </div>
+                              <div>
+                                <p className="font-medium text-sm">
+                                  +{req.amount} {currency}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {req.paymentMethod} • {req.transactionRef}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <span className={`text-xs px-2 py-1 rounded-full ${
+                                req.status === 'pending' 
+                                  ? 'bg-yellow-500/20 text-yellow-500' 
+                                  : 'bg-blue-500/20 text-blue-500'
+                              }`}>
+                                {req.status === 'pending' ? t('profile.pending') : t('profile.reviewing')}
+                              </span>
+                              <p className="text-xs text-muted-foreground mt-1">{req.date}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Transaction History */}
                   <div>
                     <h4 className="font-medium mb-3 flex items-center gap-2">
                       <History className="w-4 h-4 text-muted-foreground" />
-                      Recent Transactions
+                      {t('profile.transactionHistory')}
                     </h4>
                     <div className="space-y-2">
                       {transactions.map((tx) => (
@@ -433,19 +519,145 @@ const Profile = () => {
                           key={tx.id}
                           className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
                         >
-                          <div>
-                            <p className="font-medium text-sm">{tx.description}</p>
-                            <p className="text-xs text-muted-foreground">{tx.date}</p>
+                          <div className="flex items-center gap-3">
+                            <div className={`p-2 rounded-full ${
+                              tx.type === 'credit' ? 'bg-green-500/20' : 'bg-red-500/20'
+                            }`}>
+                              {tx.status === 'completed' ? (
+                                <CheckCircle className={`w-4 h-4 ${
+                                  tx.type === 'credit' ? 'text-green-500' : 'text-red-500'
+                                }`} />
+                              ) : (
+                                <XCircle className="w-4 h-4 text-red-500" />
+                              )}
+                            </div>
+                            <div>
+                              <p className="font-medium text-sm">{tx.description}</p>
+                              <p className="text-xs text-muted-foreground">{tx.date}</p>
+                            </div>
                           </div>
                           <span className={`font-semibold ${
                             tx.type === 'credit' ? 'text-green-500' : 'text-red-500'
                           }`}>
-                            {tx.type === 'credit' ? '+' : '-'}${tx.amount}
+                            {tx.type === 'credit' ? '+' : '-'}{tx.amount} {currency}
                           </span>
                         </div>
                       ))}
                     </div>
                   </div>
+                </div>
+              </div>
+
+              {/* Change Password Section */}
+              <div>
+                <h3 className="text-xl font-display font-semibold mb-4 flex items-center gap-2">
+                  <GlowIcon Icon={Lock} size={24} className="text-primary" />
+                  {t('profile.changePassword')}
+                </h3>
+                <div className="glass-card p-6 hover-glow">
+                  {!showChangePassword ? (
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setShowChangePassword(true)}
+                      className="btn-outline flex items-center gap-2"
+                    >
+                      <Lock className="w-4 h-4" />
+                      {t('profile.changePassword')}
+                    </motion.button>
+                  ) : (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="space-y-4"
+                    >
+                      {/* Current Password */}
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          {t('profile.currentPassword')}
+                        </label>
+                        <div className="relative">
+                          <input
+                            type={showCurrentPassword ? 'text' : 'password'}
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            className="w-full px-4 py-2 bg-input rounded-lg border border-border pr-10"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                          >
+                            {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* New Password */}
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          {t('auth.newPassword')}
+                        </label>
+                        <div className="relative">
+                          <input
+                            type={showNewPassword ? 'text' : 'password'}
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            className="w-full px-4 py-2 bg-input rounded-lg border border-border pr-10"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowNewPassword(!showNewPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                          >
+                            {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {t('auth.passwordRequirements')}
+                        </p>
+                      </div>
+
+                      {/* Confirm New Password */}
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          {t('auth.confirmNewPassword')}
+                        </label>
+                        <input
+                          type="password"
+                          value={confirmNewPassword}
+                          onChange={(e) => setConfirmNewPassword(e.target.value)}
+                          className="w-full px-4 py-2 bg-input rounded-lg border border-border"
+                        />
+                      </div>
+
+                      {/* Buttons */}
+                      <div className="flex gap-3">
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={handleChangePassword}
+                          className="btn-primary flex items-center gap-2"
+                        >
+                          <Save className="w-4 h-4" />
+                          {t('profile.savePassword')}
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => {
+                            setShowChangePassword(false);
+                            setCurrentPassword('');
+                            setNewPassword('');
+                            setConfirmNewPassword('');
+                          }}
+                          className="btn-outline"
+                        >
+                          {t('common.cancel')}
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  )}
                 </div>
               </div>
 
