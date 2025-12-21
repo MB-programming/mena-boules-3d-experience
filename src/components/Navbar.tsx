@@ -15,12 +15,22 @@ const Navbar = () => {
     { key: 'nav.services', href: '/services' },
     { key: 'nav.projects', href: '/projects' },
     { key: 'nav.courses', href: '/courses' },
+    { key: 'nav.blog', href: '/blog' },
     { key: 'nav.about', href: '/about' },
     { key: 'nav.contact', href: isHomePage ? '#contact' : '/#contact' },
   ];
 
+  const languages = [
+    { code: 'en', label: 'EN' },
+    { code: 'ar', label: 'عربي' },
+    { code: 'de', label: 'DE' },
+  ];
+
+  const currentLangIndex = languages.findIndex(l => l.code === language);
+  const nextLang = languages[(currentLangIndex + 1) % languages.length];
+
   const toggleLanguage = () => {
-    setLanguage(language === 'en' ? 'ar' : 'en');
+    setLanguage(nextLang.code as 'en' | 'ar' | 'de');
   };
 
   return (
@@ -71,7 +81,7 @@ const Navbar = () => {
               whileTap={{ scale: 0.95 }}
             >
               <Globe className="w-4 h-4" />
-              <span className="text-sm font-medium">{language === 'en' ? 'عربي' : 'EN'}</span>
+              <span className="text-sm font-medium">{nextLang.label}</span>
             </motion.button>
 
             <Link to="/auth">
