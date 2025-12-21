@@ -256,6 +256,8 @@ const translations = {
     'certificate.issueDate': 'Issue Date',
     'certificate.id': 'Certificate ID',
     'certificate.verificationNote': 'This certificate can be verified online using the certificate ID',
+    'certificate.print': 'Print',
+    'certificate.scanToVerify': 'Scan to Verify',
     
     // Profile
     'profile.title': 'My Profile',
@@ -599,6 +601,8 @@ const translations = {
     'certificate.issueDate': 'تاريخ الإصدار',
     'certificate.id': 'رقم الشهادة',
     'certificate.verificationNote': 'يمكن التحقق من هذه الشهادة عبر الإنترنت باستخدام رقم الشهادة',
+    'certificate.print': 'طباعة',
+    'certificate.scanToVerify': 'امسح للتحقق',
     
     // Profile
     'profile.title': 'ملفي الشخصي',
@@ -942,6 +946,8 @@ const translations = {
     'certificate.issueDate': 'Ausstellungsdatum',
     'certificate.id': 'Zertifikat-ID',
     'certificate.verificationNote': 'Dieses Zertifikat kann online mit der Zertifikat-ID überprüft werden',
+    'certificate.print': 'Drucken',
+    'certificate.scanToVerify': 'Scannen zum Verifizieren',
     
     // Profile
     'profile.title': 'Mein Profil',
