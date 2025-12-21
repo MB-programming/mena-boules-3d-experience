@@ -15,7 +15,10 @@ import {
   Wallet,
   Plus,
   CreditCard,
-  History
+  History,
+  Heart,
+  Trash2,
+  ShoppingCart
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
@@ -43,6 +46,12 @@ const Profile = () => {
     { id: 2, title: 'React Basics', date: 'Nov 2024' },
   ];
 
+  const [wishlist, setWishlist] = useState([
+    { id: 3, title: 'Advanced Node.js Development', price: 79, image: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=300&h=200&fit=crop' },
+    { id: 4, title: 'Mobile App Development', price: 89, image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=300&h=200&fit=crop' },
+    { id: 5, title: 'Python for Data Science', price: 69, image: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=300&h=200&fit=crop' },
+  ]);
+
   const transactions = [
     { id: 1, type: 'credit', amount: 100, description: 'Funds Added', date: 'Dec 20, 2024' },
     { id: 2, type: 'debit', amount: 50, description: 'Course Purchase: React Basics', date: 'Dec 18, 2024' },
@@ -64,6 +73,11 @@ const Profile = () => {
       setShowAddFunds(false);
       toast.success(`$${addAmount} added to your wallet!`);
     }
+  };
+
+  const removeFromWishlist = (id: number) => {
+    setWishlist(prev => prev.filter(item => item.id !== id));
+    toast.success('Removed from wishlist');
   };
 
   return (
@@ -312,6 +326,74 @@ const Profile = () => {
                     </Link>
                   ))}
                 </div>
+              </div>
+
+              {/* Wishlist */}
+              <div>
+                <h3 className="text-xl font-display font-semibold mb-4 flex items-center gap-2">
+                  <GlowIcon Icon={Heart} size={24} className="text-primary" />
+                  Wishlist
+                  {wishlist.length > 0 && (
+                    <span className="text-sm font-normal text-muted-foreground">({wishlist.length} items)</span>
+                  )}
+                </h3>
+                {wishlist.length === 0 ? (
+                  <div className="glass-card p-8 text-center">
+                    <Heart className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                    <p className="text-muted-foreground mb-4">Your wishlist is empty</p>
+                    <Link to="/courses" className="btn-primary inline-flex items-center gap-2">
+                      <BookOpen className="w-4 h-4" />
+                      Browse Courses
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {wishlist.map((item) => (
+                      <motion.div
+                        key={item.id}
+                        initial={{ opacity: 1 }}
+                        exit={{ opacity: 0, x: -100 }}
+                        className="glass-card p-4 flex gap-4 hover-glow group"
+                      >
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-24 h-16 rounded-lg object-cover"
+                        />
+                        <div className="flex-1">
+                          <Link
+                            to={`/course/${item.id}`}
+                            className="font-medium group-hover:text-primary transition-colors"
+                          >
+                            {item.title}
+                          </Link>
+                          <p className="text-lg font-bold text-primary mt-1">${item.price}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() =>
+                              toast.success('Redirecting to checkout...')
+                            }
+                            className="btn-primary flex items-center gap-2 text-sm px-3 py-2"
+                          >
+                            <ShoppingCart className="w-4 h-4" />
+                            Buy
+                          </motion.button>
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => removeFromWishlist(item.id)}
+                            className="p-2 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </motion.button>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Certificates */}
