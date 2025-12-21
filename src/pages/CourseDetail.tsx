@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { 
   Play, 
   Clock, 
@@ -102,6 +102,7 @@ By the end of this course, you will be able to:
 
 const CourseDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [expandedSections, setExpandedSections] = useState<number[]>([0]);
   const [isWishlisted, setIsWishlisted] = useState(false);
 
@@ -115,6 +116,15 @@ const CourseDetail = () => {
 
   const handleEnroll = () => {
     toast.success('Redirecting to checkout...');
+    navigate('/checkout', {
+      state: {
+        type: 'course',
+        title: courseData.title,
+        price: courseData.price,
+        image: courseData.image,
+        courseId: id,
+      },
+    });
   };
 
   const totalLessons = courseData.curriculum.reduce((acc, section) => acc + section.lessons.length, 0);
