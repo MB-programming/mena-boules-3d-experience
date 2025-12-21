@@ -14,6 +14,7 @@ import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
 import Services from "./pages/Services";
 import About from "./pages/About";
+import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/project/:slug" element={<ProjectDetail />} />
             <Route path="/services" element={<Services />} />
             <Route path="/about" element={<About />} />
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
