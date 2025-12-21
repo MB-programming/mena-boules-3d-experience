@@ -1,76 +1,85 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { Play, Clock, Users, BookOpen, Star, ChevronRight } from 'lucide-react';
+import { Play, Clock, Users, BookOpen, Star, ChevronRight, GraduationCap } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { GlowIcon, FloatIcon } from './AnimatedIcon';
 
 const courses = [
   {
     id: 1,
-    title: 'Complete React Masterclass',
-    titleAr: 'دورة React الشاملة',
-    description: 'Learn React from scratch to advanced concepts including hooks, context, and Redux',
-    descriptionAr: 'تعلم React من الصفر إلى المفاهيم المتقدمة بما في ذلك hooks و context و Redux',
+    title: 'Complete Web Development Bootcamp',
+    titleAr: 'دورة تطوير الويب الشاملة',
+    description: 'Learn HTML, CSS, JavaScript, and modern frameworks from scratch to professional level',
+    descriptionAr: 'تعلم HTML و CSS و JavaScript والأطر الحديثة من الصفر إلى المستوى الاحترافي',
     image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=400&fit=crop',
     instructor: 'Mena Boules',
-    duration: 42,
-    lessons: 156,
-    students: 2450,
+    duration: 60,
+    lessons: 200,
+    students: 5000,
     rating: 4.9,
-    price: '$99',
-    originalPrice: '$199',
+    price: '$49',
+    originalPrice: '$99',
     level: 'Beginner to Advanced',
-    tags: ['React', 'JavaScript', 'Frontend'],
+    tags: ['HTML', 'CSS', 'JavaScript', 'React'],
+    platform: 'Udemy',
+    link: 'https://www.udemy.com',
   },
   {
     id: 2,
-    title: 'UI/UX Design Fundamentals',
-    titleAr: 'أساسيات تصميم UI/UX',
-    description: 'Master the principles of user interface and user experience design with Figma',
-    descriptionAr: 'أتقن مبادئ تصميم واجهات المستخدم وتجربة المستخدم باستخدام Figma',
+    title: 'UI/UX Design Masterclass',
+    titleAr: 'ماستركلاس تصميم UI/UX',
+    description: 'Master Figma, Adobe XD, and create stunning user interfaces with modern design principles',
+    descriptionAr: 'أتقن Figma و Adobe XD وأنشئ واجهات مستخدم مذهلة بمبادئ التصميم الحديثة',
     image: 'https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=600&h=400&fit=crop',
     instructor: 'Mena Boules',
-    duration: 28,
-    lessons: 89,
-    students: 1830,
+    duration: 35,
+    lessons: 120,
+    students: 3200,
     rating: 4.8,
-    price: '$79',
-    originalPrice: '$159',
+    price: '$39',
+    originalPrice: '$79',
     level: 'Beginner',
-    tags: ['Figma', 'UI/UX', 'Design'],
+    tags: ['Figma', 'XD', 'UI Design'],
+    platform: 'TeraCourses',
+    link: 'https://teracourses.com',
   },
   {
     id: 3,
-    title: 'Full-Stack Web Development',
-    titleAr: 'تطوير الويب المتكامل',
-    description: 'Build complete web applications with Node.js, Express, MongoDB, and React',
-    descriptionAr: 'بناء تطبيقات ويب كاملة باستخدام Node.js و Express و MongoDB و React',
+    title: 'WordPress Development Complete',
+    titleAr: 'تطوير WordPress الكامل',
+    description: 'Build professional websites, customize themes, and create plugins from scratch',
+    descriptionAr: 'بناء مواقع احترافية وتخصيص القوالب وإنشاء الإضافات من الصفر',
     image: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=600&h=400&fit=crop',
     instructor: 'Mena Boules',
-    duration: 65,
-    lessons: 234,
-    students: 3200,
+    duration: 45,
+    lessons: 150,
+    students: 4500,
     rating: 5.0,
-    price: '$149',
-    originalPrice: '$299',
+    price: '$59',
+    originalPrice: '$119',
     level: 'Intermediate',
-    tags: ['Node.js', 'MongoDB', 'Full-Stack'],
+    tags: ['WordPress', 'PHP', 'Themes'],
+    platform: 'Maaref',
+    link: 'https://m3aarf.com',
   },
   {
     id: 4,
-    title: 'TypeScript Deep Dive',
-    titleAr: 'الغوص في TypeScript',
-    description: 'Advanced TypeScript patterns, generics, and best practices for large applications',
-    descriptionAr: 'أنماط TypeScript المتقدمة والأنماط العامة وأفضل الممارسات للتطبيقات الكبيرة',
+    title: 'React.js from Zero to Hero',
+    titleAr: 'React.js من الصفر إلى الاحتراف',
+    description: 'Complete React course with hooks, context, Redux, and real-world projects',
+    descriptionAr: 'دورة React كاملة مع hooks و context و Redux ومشاريع حقيقية',
     image: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=600&h=400&fit=crop',
     instructor: 'Mena Boules',
-    duration: 18,
-    lessons: 67,
-    students: 1120,
+    duration: 40,
+    lessons: 180,
+    students: 2800,
     rating: 4.9,
-    price: '$69',
-    originalPrice: '$139',
-    level: 'Advanced',
-    tags: ['TypeScript', 'JavaScript', 'Frontend'],
+    price: '$45',
+    originalPrice: '$89',
+    level: 'Intermediate',
+    tags: ['React', 'JavaScript', 'Redux'],
+    platform: 'IT Sharks',
+    link: 'https://itsharks.com',
   },
 ];
 
@@ -88,15 +97,18 @@ const CoursesSection = () => {
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-6xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="mb-16"
         >
-          <h2 className="section-title mb-4">{t('courses.title')}</h2>
-          <div className="w-24 h-1 bg-primary mx-auto rounded-full mb-4" />
+          <div className="flex items-center gap-3 mb-4">
+            <FloatIcon Icon={GraduationCap} size={32} className="text-primary" />
+            <h2 className="section-title">{t('courses.title')}</h2>
+          </div>
+          <div className="w-24 h-1 bg-primary rounded-full mb-4" />
           <p className="text-muted-foreground text-lg">{t('courses.subtitle')}</p>
         </motion.div>
 
@@ -138,9 +150,16 @@ const CoursesSection = () => {
                     </motion.button>
                   </motion.div>
 
-                  {/* Level Badge */}
+                  {/* Platform Badge */}
                   <div className="absolute top-4 left-4">
                     <span className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-background/90 backdrop-blur-sm text-primary">
+                      {course.platform}
+                    </span>
+                  </div>
+
+                  {/* Level Badge */}
+                  <div className="absolute bottom-4 left-4">
+                    <span className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-primary/90 text-primary-foreground">
                       {course.level}
                     </span>
                   </div>
@@ -160,15 +179,15 @@ const CoursesSection = () => {
                     {/* Stats */}
                     <div className="flex flex-wrap gap-4 mb-4 text-sm">
                       <div className="flex items-center gap-1.5 text-muted-foreground">
-                        <Clock className="w-4 h-4" />
+                        <GlowIcon Icon={Clock} size={16} delay={index * 0.2} />
                         <span>{course.duration} {t('courses.hours')}</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-muted-foreground">
-                        <BookOpen className="w-4 h-4" />
+                        <GlowIcon Icon={BookOpen} size={16} delay={index * 0.2 + 0.1} />
                         <span>{course.lessons} {t('courses.lessons')}</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-muted-foreground">
-                        <Users className="w-4 h-4" />
+                        <GlowIcon Icon={Users} size={16} delay={index * 0.2 + 0.2} />
                         <span>{course.students.toLocaleString()} {t('courses.students')}</span>
                       </div>
                     </div>
@@ -199,14 +218,17 @@ const CoursesSection = () => {
                       </div>
                     </div>
                     
-                    <motion.button
+                    <motion.a
+                      href={course.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       whileHover={{ scale: 1.05, x: 5 }}
                       whileTap={{ scale: 0.95 }}
                       className="flex items-center gap-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm"
                     >
                       {t('courses.enroll')}
                       <ChevronRight className="w-4 h-4" />
-                    </motion.button>
+                    </motion.a>
                   </div>
                 </div>
               </div>
