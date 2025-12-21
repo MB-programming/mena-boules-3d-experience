@@ -4,7 +4,7 @@ import { FileText, MessageCircle, Briefcase, Award } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { AnimatedWave, AnimatedPeace, GlowIcon } from './AnimatedIcon';
 import ExperienceSlider from './ExperienceSlider';
-import CertificatesSection from './CertificatesSection';
+import CertificatesSlider from './CertificatesSlider';
 import menaProfile from '@/assets/mena-profile.png';
 
 const AboutSection = () => {
@@ -137,7 +137,7 @@ const AboutSection = () => {
               <GlowIcon Icon={Award} size={24} className="text-primary" />
               Education & Certificates
             </h3>
-            <CertificatesSection />
+            <CertificatesSlider />
           </motion.div>
         </div>
       </div>

@@ -11,7 +11,11 @@ import {
   LogOut,
   ArrowLeft,
   Edit2,
-  Save
+  Save,
+  Wallet,
+  Plus,
+  CreditCard,
+  History
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
@@ -19,11 +23,14 @@ import { AnimatedSparkle, GlowIcon } from '@/components/AnimatedIcon';
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [showAddFunds, setShowAddFunds] = useState(false);
+  const [addAmount, setAddAmount] = useState('');
   const [profile, setProfile] = useState({
     name: 'Ahmed Mohamed',
     email: 'ahmed@example.com',
     bio: 'Passionate web developer learning new skills every day.',
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+    walletBalance: 250.00,
   });
 
   const enrolledCourses = [
@@ -36,9 +43,27 @@ const Profile = () => {
     { id: 2, title: 'React Basics', date: 'Nov 2024' },
   ];
 
+  const transactions = [
+    { id: 1, type: 'credit', amount: 100, description: 'Funds Added', date: 'Dec 20, 2024' },
+    { id: 2, type: 'debit', amount: 50, description: 'Course Purchase: React Basics', date: 'Dec 18, 2024' },
+    { id: 3, type: 'credit', amount: 200, description: 'Funds Added', date: 'Dec 15, 2024' },
+  ];
+
   const handleSave = () => {
     setIsEditing(false);
     toast.success('Profile updated successfully!');
+  };
+
+  const handleAddFunds = () => {
+    if (addAmount && parseFloat(addAmount) > 0) {
+      setProfile(prev => ({
+        ...prev,
+        walletBalance: prev.walletBalance + parseFloat(addAmount)
+      }));
+      setAddAmount('');
+      setShowAddFunds(false);
+      toast.success(`$${addAmount} added to your wallet!`);
+    }
   };
 
   return (
@@ -143,6 +168,110 @@ const Profile = () => {
               transition={{ delay: 0.2 }}
               className="lg:col-span-2 space-y-8"
             >
+              {/* Wallet Section */}
+              <div>
+                <h3 className="text-xl font-display font-semibold mb-4 flex items-center gap-2">
+                  <GlowIcon Icon={Wallet} size={24} className="text-primary" />
+                  My Wallet
+                </h3>
+                <div className="glass-card p-6 hover-glow">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">Available Balance</p>
+                      <p className="text-4xl font-display font-bold gradient-text">
+                        ${profile.walletBalance.toFixed(2)}
+                      </p>
+                    </div>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setShowAddFunds(!showAddFunds)}
+                      className="btn-primary flex items-center gap-2"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Add Funds
+                    </motion.button>
+                  </div>
+
+                  {/* Add Funds Form */}
+                  {showAddFunds && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="mb-6 p-4 bg-primary/5 rounded-xl border border-primary/20"
+                    >
+                      <h4 className="font-medium mb-3 flex items-center gap-2">
+                        <CreditCard className="w-4 h-4 text-primary" />
+                        Add Funds to Wallet
+                      </h4>
+                      <div className="flex gap-2 mb-3">
+                        {[25, 50, 100, 200].map((amount) => (
+                          <motion.button
+                            key={amount}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setAddAmount(amount.toString())}
+                            className={`px-4 py-2 rounded-lg border ${
+                              addAmount === amount.toString()
+                                ? 'border-primary bg-primary/10 text-primary'
+                                : 'border-border hover:border-primary/50'
+                            }`}
+                          >
+                            ${amount}
+                          </motion.button>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="relative flex-1">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                          <input
+                            type="number"
+                            value={addAmount}
+                            onChange={(e) => setAddAmount(e.target.value)}
+                            placeholder="Custom amount"
+                            className="w-full pl-8 pr-4 py-2 bg-input rounded-lg border border-border"
+                          />
+                        </div>
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={handleAddFunds}
+                          className="btn-primary px-6"
+                        >
+                          Add
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* Transaction History */}
+                  <div>
+                    <h4 className="font-medium mb-3 flex items-center gap-2">
+                      <History className="w-4 h-4 text-muted-foreground" />
+                      Recent Transactions
+                    </h4>
+                    <div className="space-y-2">
+                      {transactions.map((tx) => (
+                        <div
+                          key={tx.id}
+                          className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
+                        >
+                          <div>
+                            <p className="font-medium text-sm">{tx.description}</p>
+                            <p className="text-xs text-muted-foreground">{tx.date}</p>
+                          </div>
+                          <span className={`font-semibold ${
+                            tx.type === 'credit' ? 'text-green-500' : 'text-red-500'
+                          }`}>
+                            {tx.type === 'credit' ? '+' : '-'}${tx.amount}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Enrolled Courses */}
               <div>
                 <h3 className="text-xl font-display font-semibold mb-4 flex items-center gap-2">
