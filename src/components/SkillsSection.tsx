@@ -1,27 +1,41 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { 
+  Figma, 
+  Palette, 
+  PenTool,
+  FileCode2,
+  Code2,
+  Braces,
+  Database,
+  Layers,
+  Sparkles,
+  Box,
+  Wind,
+  Globe,
+  ShoppingCart,
+  Atom,
+  Zap
+} from 'lucide-react';
 
-// Skill icons from the website
 const skills = [
-  { name: 'Figma', icon: 'https://minaboules.com/wp-content/uploads/2024/08/figma-icon.png', category: 'Design' },
-  { name: 'Illustrator', icon: 'https://minaboules.com/wp-content/uploads/2024/08/Ai-icon.png', category: 'Design' },
-  { name: 'XD', icon: 'https://minaboules.com/wp-content/uploads/2025/10/images-1.png', category: 'Design' },
-  { name: 'HTML5', icon: 'https://minaboules.com/wp-content/uploads/2025/10/HTML5.webp', category: 'Frontend' },
-  { name: 'CSS3', icon: 'https://minaboules.com/wp-content/uploads/2025/10/css3-square-e1759403344295.png', category: 'Frontend' },
-  { name: 'JavaScript', icon: 'https://minaboules.com/wp-content/uploads/2025/10/image-1.png', category: 'Frontend' },
-  { name: 'PHP', icon: 'https://minaboules.com/wp-content/uploads/2025/10/php-1-logo-png-transparent.png', category: 'Backend' },
-  { name: 'jQuery', icon: 'https://minaboules.com/wp-content/uploads/2025/10/0_eFomJUFua8tuqe8g.png', category: 'Frontend' },
-  { name: 'GSAP', icon: 'https://minaboules.com/wp-content/uploads/2025/10/2386673.png', category: 'Frontend' },
-  { name: 'Bootstrap', icon: 'https://minaboules.com/wp-content/uploads/2025/10/bootstrap-stack.png', category: 'Frontend' },
-  { name: 'Tailwind', icon: 'https://minaboules.com/wp-content/uploads/2025/10/tailwind-css-logo-rounded-free-png.webp', category: 'Frontend' },
-  { name: 'WordPress', icon: 'https://minaboules.com/wp-content/uploads/2025/10/WordPress.com-Logo.wine_-scaled.png', category: 'CMS' },
-  { name: 'PrestaShop', icon: 'https://minaboules.com/wp-content/uploads/2025/10/825533.png', category: 'CMS' },
-  { name: 'Next.js', icon: 'https://minaboules.com/wp-content/uploads/2025/10/dango-inner-2.webp', category: 'Frontend' },
-  { name: 'React', icon: 'https://minaboules.com/wp-content/uploads/2025/10/react-icon_svg_.webp', category: 'Frontend' },
+  { name: 'Figma', icon: Figma, category: 'Design', color: '#F24E1E' },
+  { name: 'Illustrator', icon: Palette, category: 'Design', color: '#FF9A00' },
+  { name: 'XD', icon: PenTool, category: 'Design', color: '#FF61F6' },
+  { name: 'HTML5', icon: FileCode2, category: 'Frontend', color: '#E34F26' },
+  { name: 'CSS3', icon: Code2, category: 'Frontend', color: '#1572B6' },
+  { name: 'JavaScript', icon: Braces, category: 'Frontend', color: '#F7DF1E' },
+  { name: 'PHP', icon: Database, category: 'Backend', color: '#777BB4' },
+  { name: 'jQuery', icon: Layers, category: 'Frontend', color: '#0769AD' },
+  { name: 'GSAP', icon: Sparkles, category: 'Frontend', color: '#88CE02' },
+  { name: 'Bootstrap', icon: Box, category: 'Frontend', color: '#7952B3' },
+  { name: 'Tailwind', icon: Wind, category: 'Frontend', color: '#06B6D4' },
+  { name: 'WordPress', icon: Globe, category: 'CMS', color: '#21759B' },
+  { name: 'PrestaShop', icon: ShoppingCart, category: 'CMS', color: '#DF0067' },
+  { name: 'Next.js', icon: Zap, category: 'Frontend', color: '#ffffff' },
+  { name: 'React', icon: Atom, category: 'Frontend', color: '#61DAFB' },
 ];
-
-const categories = ['All', 'Design', 'Frontend', 'Backend', 'CMS'];
 
 const SkillsSection = () => {
   const { t } = useLanguage();
@@ -48,7 +62,7 @@ const SkillsSection = () => {
           <p className="text-muted-foreground text-lg">{t('skills.subtitle')}</p>
         </motion.div>
 
-        {/* Skills Grid */}
+        {/* Skills Grid with Neon Icons */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
@@ -62,33 +76,72 @@ const SkillsSection = () => {
               animate={isInView ? { opacity: 1, scale: 1, y: 0 } : {}}
               transition={{ duration: 0.4, delay: 0.05 * index }}
               whileHover={{ 
-                scale: 1.1, 
+                scale: 1.15, 
                 y: -10,
                 transition: { duration: 0.2 }
               }}
-              className="glass-card p-4 flex flex-col items-center gap-3 hover-glow cursor-pointer group"
+              className="glass-card p-5 flex flex-col items-center gap-4 cursor-pointer group relative overflow-hidden"
+              style={{
+                '--skill-color': skill.color,
+              } as React.CSSProperties}
             >
+              {/* Neon glow background */}
               <motion.div 
-                className="w-12 h-12 flex items-center justify-center"
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                style={{
+                  background: `radial-gradient(circle at center, ${skill.color}20 0%, transparent 70%)`,
+                }}
+              />
+              
+              {/* Icon with neon effect */}
+              <motion.div 
+                className="relative z-10"
                 animate={{ 
-                  rotate: [0, 5, -5, 0],
+                  filter: [
+                    `drop-shadow(0 0 3px ${skill.color}40)`,
+                    `drop-shadow(0 0 8px ${skill.color}60)`,
+                    `drop-shadow(0 0 3px ${skill.color}40)`
+                  ]
                 }}
                 transition={{ 
-                  duration: 4, 
+                  duration: 2, 
                   repeat: Infinity, 
-                  delay: index * 0.2,
+                  delay: index * 0.1,
                   ease: "easeInOut"
                 }}
               >
-                <img 
-                  src={skill.icon} 
-                  alt={skill.name}
-                  className="w-full h-full object-contain filter group-hover:drop-shadow-[0_0_8px_hsl(var(--primary))]"
+                <skill.icon 
+                  size={36} 
+                  style={{ color: skill.color }}
+                  className="transition-all duration-300 group-hover:scale-110"
                 />
               </motion.div>
-              <span className="text-sm font-medium text-center group-hover:text-primary transition-colors">
-                {skill.name}
+              
+              {/* Skill name */}
+              <span 
+                className="text-sm font-medium text-center relative z-10 transition-colors duration-300"
+                style={{ 
+                  textShadow: `0 0 20px ${skill.color}00`,
+                }}
+              >
+                <motion.span
+                  className="group-hover:text-white transition-colors"
+                  style={{
+                    textShadow: `0 0 10px ${skill.color}`,
+                  }}
+                >
+                  {skill.name}
+                </motion.span>
               </span>
+
+              {/* Bottom neon line */}
+              <motion.div
+                className="absolute bottom-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                style={{ 
+                  background: `linear-gradient(90deg, transparent, ${skill.color}, transparent)`,
+                  boxShadow: `0 0 10px ${skill.color}, 0 0 20px ${skill.color}`,
+                }}
+              />
             </motion.div>
           ))}
           
@@ -97,40 +150,29 @@ const SkillsSection = () => {
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={isInView ? { opacity: 1, scale: 1, y: 0 } : {}}
             transition={{ duration: 0.4, delay: 0.05 * skills.length }}
-            whileHover={{ scale: 1.1, y: -10 }}
-            className="glass-card p-4 flex flex-col items-center justify-center gap-3 hover-glow cursor-pointer group bg-primary/5"
+            whileHover={{ scale: 1.15, y: -10 }}
+            className="glass-card p-5 flex flex-col items-center justify-center gap-4 cursor-pointer group relative overflow-hidden"
           >
-            <motion.span 
-              className="text-3xl"
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
+            <motion.div 
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              style={{
+                background: `radial-gradient(circle at center, hsl(var(--primary) / 0.2) 0%, transparent 70%)`,
+              }}
+            />
+            <motion.div
+              animate={{ 
+                rotate: [0, 360],
+                scale: [1, 1.2, 1]
+              }}
+              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              className="relative z-10"
             >
-              ✨
-            </motion.span>
-            <span className="text-sm font-medium text-center text-primary">
+              <Sparkles size={36} className="text-primary" />
+            </motion.div>
+            <span className="text-sm font-medium text-center text-primary relative z-10">
               And More...
             </span>
           </motion.div>
-        </motion.div>
-
-        {/* Category Pills */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="mt-12 flex flex-wrap justify-center gap-3"
-        >
-          {categories.map((category, index) => (
-            <motion.span
-              key={category}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={isInView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
-              className="px-4 py-2 rounded-full bg-card border border-border text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary cursor-pointer transition-all"
-            >
-              {category}
-            </motion.span>
-          ))}
         </motion.div>
       </div>
     </section>

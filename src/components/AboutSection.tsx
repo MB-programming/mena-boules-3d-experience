@@ -1,17 +1,36 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { FileText, MessageCircle } from 'lucide-react';
+import { FileText, MessageCircle, Briefcase, GraduationCap } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { AnimatedWave, AnimatedPeace, GlowIcon } from './AnimatedIcon';
 import menaProfile from '@/assets/mena-profile.png';
 
 const experiences = [
-  { company: 'Wida', role: 'Web Developer', period: 'Jan 2025 - Present' },
-  { company: 'Sunweb Solution', role: 'Team Leader', period: 'Apr 2023 - Present' },
-  { company: 'Pessarde', role: 'Senior Web Developer', period: 'Jan 2024 - Mar 2025' },
-  { company: 'SUNGROUP', role: 'Team Leader', period: 'May 2020 - Present' },
-  { company: 'Winmarket Agency', role: 'Team Leader', period: 'May 2020 - Present' },
-  { company: 'Netlab Academy', role: 'CEO - Founder', period: 'Jan 2018' },
+  { company: 'Wida', role: 'Web Developer', period: 'Jan 2025 - Present', logo: 'WD' },
+  { company: 'Sunweb Solution', role: 'Team Leader', period: 'Apr 2023 - Present', logo: 'SW' },
+  { company: 'Pessarde', role: 'Senior Web Developer', period: 'Jan 2024 - Mar 2025', logo: 'PS' },
+  { company: 'SUNGROUP', role: 'Team Leader', period: 'May 2020 - Present', logo: 'SG' },
+  { company: 'Winmarket Agency', role: 'Team Leader', period: 'May 2020 - Present', logo: 'WM' },
+  { company: 'Entreprenelle', role: 'Web Developer', period: 'May 2020 - Dec 2025', logo: 'EN' },
+  { company: 'SOFM', role: 'Web Developer', period: 'May 2020 - Dec 2022', logo: 'SF' },
+  { company: 'Makyn', role: 'Web Developer & Designer', period: 'Jan 2022 - Oct 2023', logo: 'MK' },
+  { company: 'Silvertech', role: 'Team Leader', period: 'Feb 2019', logo: 'ST' },
+  { company: 'IT Sharks', role: 'Instructor', period: 'Feb 2019', logo: 'IT' },
+  { company: 'Maaref', role: 'Instructor', period: 'Feb 2019', logo: 'M3' },
+  { company: 'Netlab Academy', role: 'CEO - Founder', period: 'Jan 2018', logo: 'NL' },
+  { company: 'Kingston Business', role: 'Web Developer & Instructor', period: 'Jan 2018', logo: 'KB' },
+  { company: 'Undercontrol', role: 'Web Developer', period: 'Jan 2019', logo: 'UC' },
+  { company: 'TeraCourses', role: 'Instructor', period: 'Jan 2024', logo: 'TC' },
+  { company: 'Udemy', role: 'Instructor', period: 'Jan 2025', logo: 'UD' },
+];
+
+const education = [
+  { institution: 'Suez Canal University', degree: 'Commerce, Business, Management', period: '2021 - Present' },
+  { institution: 'Microsoft', degree: 'Microsoft Technology Associate Developer', period: '2022' },
+  { institution: 'MCIT', degree: 'Egypt FWD Web Development', period: '2022' },
+  { institution: 'Udacity', degree: 'Full Stack Development Track', period: '2019' },
+  { institution: 'IBM', degree: 'HTML & CSS & JavaScript Advanced', period: '2022' },
+  { institution: 'Google', degree: 'Google Digital Marketing', period: '2022' },
 ];
 
 const AboutSection = () => {
@@ -27,7 +46,7 @@ const AboutSection = () => {
 
   return (
     <section id="about" className="py-32 px-6" ref={ref}>
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -38,33 +57,31 @@ const AboutSection = () => {
           <div className="w-24 h-1 bg-primary rounded-full" />
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
+        <div className="grid lg:grid-cols-3 gap-10">
           {/* Profile Card */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative"
           >
-            <div className="glass-card p-8 hover-glow relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-40 h-40 bg-secondary/10 rounded-full blur-3xl" />
+            <div className="glass-card p-6 hover-glow relative overflow-hidden sticky top-24">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl" />
               
               <div className="relative z-10">
                 <motion.img
                   src={menaProfile}
                   alt="Mena Boules"
-                  className="w-32 h-32 mx-auto mb-6 rounded-full border-2 border-primary/50 object-cover"
+                  className="w-28 h-28 mx-auto mb-4 rounded-full border-2 border-primary/50 object-cover"
                   whileHover={{ scale: 1.05 }}
                 />
                 
-                <div className="text-center mb-6">
-                  <div className="flex items-center justify-center gap-2 text-2xl mb-2">
+                <div className="text-center mb-4">
+                  <div className="flex items-center justify-center gap-2 text-lg mb-1">
                     <span>{t('about.greeting')}</span>
                     <AnimatedWave />
                   </div>
-                  <p className="text-muted-foreground mb-1">{t('about.iam')}</p>
-                  <h3 className="text-2xl font-display font-bold gradient-text">
+                  <p className="text-muted-foreground text-sm mb-1">{t('about.iam')}</p>
+                  <h3 className="text-xl font-display font-bold gradient-text">
                     {t('about.fullname')}
                   </h3>
                 </div>
@@ -72,91 +89,118 @@ const AboutSection = () => {
                 <p className="text-muted-foreground text-sm leading-relaxed mb-4">
                   {t('about.description')}
                 </p>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  {t('about.description2')}
-                </p>
+
+                {/* Stats */}
+                <div className="grid grid-cols-3 gap-2 mb-4">
+                  {stats.map((stat, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={isInView ? { opacity: 1, y: 0 } : {}}
+                      transition={{ duration: 0.6, delay: 0.8 + index * 0.1 }}
+                      className="glass-card p-3 text-center"
+                    >
+                      <div className="text-xl font-display font-bold gradient-text">
+                        {stat.value}
+                      </div>
+                      <div className="text-[10px] text-muted-foreground">
+                        {stat.label}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* CTA Buttons */}
+                <div className="flex flex-col gap-2">
+                  <motion.a
+                    href="https://minaboules.com/wp-content/uploads/2025/10/Mena-Kelta-cv.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="btn-outline flex items-center justify-center gap-2 text-sm py-2"
+                  >
+                    <GlowIcon Icon={FileText} size={16} />
+                    {t('about.resume')}
+                  </motion.a>
+                  <motion.a
+                    href="https://wa.me/201222112819"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="btn-primary flex items-center justify-center gap-2 text-sm py-2"
+                  >
+                    <GlowIcon Icon={MessageCircle} size={16} />
+                    {t('about.hire')}
+                    <AnimatedPeace />
+                  </motion.a>
+                </div>
               </div>
             </div>
           </motion.div>
 
-          {/* Experience & Stats */}
+          {/* Experience */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            initial={{ opacity: 0, y: 50 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="space-y-8"
           >
-            {/* Experience */}
-            <div>
-              <h3 className="text-xl font-display font-semibold mb-6 flex items-center gap-2">
-                Experience
-              </h3>
-              <div className="space-y-4">
-                {experiences.map((exp, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={isInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
-                    className="glass-card p-4 flex items-center gap-4 hover-glow"
-                  >
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
-                      {exp.company.slice(0, 2).toUpperCase()}
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-medium">{exp.role} <span className="text-primary">@{exp.company}</span></p>
-                      <p className="text-sm text-muted-foreground">{exp.period}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-4">
-              {stats.map((stat, index) => (
+            <h3 className="text-xl font-display font-semibold mb-6 flex items-center gap-2">
+              <GlowIcon Icon={Briefcase} size={24} className="text-primary" />
+              Experience
+            </h3>
+            <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+              {experiences.map((exp, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.6, delay: 0.8 + index * 0.1 }}
-                  className="glass-card p-4 text-center hover-glow"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={isInView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ duration: 0.4, delay: 0.5 + index * 0.05 }}
+                  whileHover={{ scale: 1.02, x: 5 }}
+                  className="glass-card p-3 flex items-center gap-3 hover-glow cursor-pointer"
                 >
-                  <div className="text-3xl md:text-4xl font-display font-bold gradient-text mb-1">
-                    {stat.value}
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-primary font-bold text-xs border border-primary/30">
+                    {exp.logo}
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    {stat.label}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm truncate">
+                      {exp.role} <span className="text-primary">@{exp.company}</span>
+                    </p>
+                    <p className="text-xs text-muted-foreground">{exp.period}</p>
                   </div>
                 </motion.div>
               ))}
             </div>
+          </motion.div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4">
-              <motion.a
-                href="https://minaboules.com/wp-content/uploads/2025/10/Mena-Kelta-cv.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn-outline flex items-center gap-2"
-              >
-                <GlowIcon Icon={FileText} size={18} />
-                {t('about.resume')}
-              </motion.a>
-              <motion.a
-                href="https://wa.me/201222112819"
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn-primary flex items-center gap-2"
-              >
-                <GlowIcon Icon={MessageCircle} size={18} />
-                {t('about.hire')}
-                <AnimatedPeace />
-              </motion.a>
+          {/* Education */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
+            <h3 className="text-xl font-display font-semibold mb-6 flex items-center gap-2">
+              <GlowIcon Icon={GraduationCap} size={24} className="text-primary" />
+              Education & Certificates
+            </h3>
+            <div className="space-y-3">
+              {education.map((edu, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={isInView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ duration: 0.4, delay: 0.7 + index * 0.1 }}
+                  whileHover={{ scale: 1.02, x: 5 }}
+                  className="glass-card p-4 hover-glow cursor-pointer"
+                >
+                  <p className="font-medium text-sm mb-1">
+                    {edu.degree}
+                  </p>
+                  <p className="text-primary text-sm">@{edu.institution}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{edu.period}</p>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         </div>
