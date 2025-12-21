@@ -2,24 +2,26 @@ import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 
+// Skill icons from the website
 const skills = [
-  { name: 'React', category: 'Frontend' },
-  { name: 'TypeScript', category: 'Language' },
-  { name: 'Node.js', category: 'Backend' },
-  { name: 'Python', category: 'Language' },
-  { name: 'Next.js', category: 'Frontend' },
-  { name: 'TailwindCSS', category: 'Styling' },
-  { name: 'PostgreSQL', category: 'Database' },
-  { name: 'MongoDB', category: 'Database' },
-  { name: 'GraphQL', category: 'API' },
-  { name: 'Docker', category: 'DevOps' },
-  { name: 'AWS', category: 'Cloud' },
-  { name: 'Git', category: 'Tools' },
-  { name: 'Three.js', category: 'Frontend' },
-  { name: 'Express.js', category: 'Backend' },
-  { name: 'REST APIs', category: 'API' },
-  { name: 'Firebase', category: 'Cloud' },
+  { name: 'Figma', icon: 'https://minaboules.com/wp-content/uploads/2024/08/figma-icon.png', category: 'Design' },
+  { name: 'Illustrator', icon: 'https://minaboules.com/wp-content/uploads/2024/08/Ai-icon.png', category: 'Design' },
+  { name: 'XD', icon: 'https://minaboules.com/wp-content/uploads/2025/10/images-1.png', category: 'Design' },
+  { name: 'HTML5', icon: 'https://minaboules.com/wp-content/uploads/2025/10/HTML5.webp', category: 'Frontend' },
+  { name: 'CSS3', icon: 'https://minaboules.com/wp-content/uploads/2025/10/css3-square-e1759403344295.png', category: 'Frontend' },
+  { name: 'JavaScript', icon: 'https://minaboules.com/wp-content/uploads/2025/10/image-1.png', category: 'Frontend' },
+  { name: 'PHP', icon: 'https://minaboules.com/wp-content/uploads/2025/10/php-1-logo-png-transparent.png', category: 'Backend' },
+  { name: 'jQuery', icon: 'https://minaboules.com/wp-content/uploads/2025/10/0_eFomJUFua8tuqe8g.png', category: 'Frontend' },
+  { name: 'GSAP', icon: 'https://minaboules.com/wp-content/uploads/2025/10/2386673.png', category: 'Frontend' },
+  { name: 'Bootstrap', icon: 'https://minaboules.com/wp-content/uploads/2025/10/bootstrap-stack.png', category: 'Frontend' },
+  { name: 'Tailwind', icon: 'https://minaboules.com/wp-content/uploads/2025/10/tailwind-css-logo-rounded-free-png.webp', category: 'Frontend' },
+  { name: 'WordPress', icon: 'https://minaboules.com/wp-content/uploads/2025/10/WordPress.com-Logo.wine_-scaled.png', category: 'CMS' },
+  { name: 'PrestaShop', icon: 'https://minaboules.com/wp-content/uploads/2025/10/825533.png', category: 'CMS' },
+  { name: 'Next.js', icon: 'https://minaboules.com/wp-content/uploads/2025/10/dango-inner-2.webp', category: 'Frontend' },
+  { name: 'React', icon: 'https://minaboules.com/wp-content/uploads/2025/10/react-icon_svg_.webp', category: 'Frontend' },
 ];
+
+const categories = ['All', 'Design', 'Frontend', 'Backend', 'CMS'];
 
 const SkillsSection = () => {
   const { t } = useLanguage();
@@ -39,59 +41,95 @@ const SkillsSection = () => {
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="mb-16"
         >
           <h2 className="section-title mb-4">{t('skills.title')}</h2>
-          <div className="w-24 h-1 bg-primary mx-auto rounded-full mb-4" />
+          <div className="w-24 h-1 bg-primary rounded-full mb-4" />
           <p className="text-muted-foreground text-lg">{t('skills.subtitle')}</p>
         </motion.div>
 
+        {/* Skills Grid */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="flex flex-wrap justify-center gap-4"
+          className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-6"
         >
           {skills.map((skill, index) => (
             <motion.div
               key={skill.name}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={isInView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.4, delay: 0.1 * index }}
-              whileHover={{ scale: 1.1, y: -5 }}
-              className="skill-tag cursor-default"
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={isInView ? { opacity: 1, scale: 1, y: 0 } : {}}
+              transition={{ duration: 0.4, delay: 0.05 * index }}
+              whileHover={{ 
+                scale: 1.1, 
+                y: -10,
+                transition: { duration: 0.2 }
+              }}
+              className="glass-card p-4 flex flex-col items-center gap-3 hover-glow cursor-pointer group"
             >
-              {skill.name}
+              <motion.div 
+                className="w-12 h-12 flex items-center justify-center"
+                animate={{ 
+                  rotate: [0, 5, -5, 0],
+                }}
+                transition={{ 
+                  duration: 4, 
+                  repeat: Infinity, 
+                  delay: index * 0.2,
+                  ease: "easeInOut"
+                }}
+              >
+                <img 
+                  src={skill.icon} 
+                  alt={skill.name}
+                  className="w-full h-full object-contain filter group-hover:drop-shadow-[0_0_8px_hsl(var(--primary))]"
+                />
+              </motion.div>
+              <span className="text-sm font-medium text-center group-hover:text-primary transition-colors">
+                {skill.name}
+              </span>
             </motion.div>
           ))}
+          
+          {/* And More */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={isInView ? { opacity: 1, scale: 1, y: 0 } : {}}
+            transition={{ duration: 0.4, delay: 0.05 * skills.length }}
+            whileHover={{ scale: 1.1, y: -10 }}
+            className="glass-card p-4 flex flex-col items-center justify-center gap-3 hover-glow cursor-pointer group bg-primary/5"
+          >
+            <motion.span 
+              className="text-3xl"
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              ✨
+            </motion.span>
+            <span className="text-sm font-medium text-center text-primary">
+              And More...
+            </span>
+          </motion.div>
         </motion.div>
 
-        {/* Tech Stack Grid */}
+        {/* Category Pills */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6"
+          className="mt-12 flex flex-wrap justify-center gap-3"
         >
-          {['Frontend', 'Backend', 'Database', 'Cloud'].map((category, index) => (
-            <motion.div
+          {categories.map((category, index) => (
+            <motion.span
               key={category}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.5 + index * 0.1 }}
-              className="glass-card p-6 text-center hover-glow"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={isInView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
+              className="px-4 py-2 rounded-full bg-card border border-border text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary cursor-pointer transition-all"
             >
-              <div className="text-3xl mb-3">
-                {category === 'Frontend' && '🎨'}
-                {category === 'Backend' && '⚙️'}
-                {category === 'Database' && '🗄️'}
-                {category === 'Cloud' && '☁️'}
-              </div>
-              <h3 className="font-display font-semibold text-lg">{category}</h3>
-              <p className="text-sm text-muted-foreground mt-2">
-                {skills.filter(s => s.category === category).map(s => s.name).join(', ')}
-              </p>
-            </motion.div>
+              {category}
+            </motion.span>
           ))}
         </motion.div>
       </div>
