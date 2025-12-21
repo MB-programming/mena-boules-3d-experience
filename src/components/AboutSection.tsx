@@ -1,19 +1,11 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { FileText, MessageCircle, Briefcase, GraduationCap } from 'lucide-react';
+import { FileText, MessageCircle, Briefcase, Award } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { AnimatedWave, AnimatedPeace, GlowIcon } from './AnimatedIcon';
 import ExperienceSlider from './ExperienceSlider';
+import CertificatesSection from './CertificatesSection';
 import menaProfile from '@/assets/mena-profile.png';
-
-const education = [
-  { institution: 'Suez Canal University', degree: 'Commerce, Business, Management', period: '2021 - Present' },
-  { institution: 'Microsoft', degree: 'Microsoft Technology Associate Developer', period: '2022' },
-  { institution: 'MCIT', degree: 'Egypt FWD Web Development', period: '2022' },
-  { institution: 'Udacity', degree: 'Full Stack Development Track', period: '2019' },
-  { institution: 'IBM', degree: 'HTML & CSS & JavaScript Advanced', period: '2022' },
-  { institution: 'Google', degree: 'Google Digital Marketing', period: '2022' },
-];
 
 const AboutSection = () => {
   const { t } = useLanguage();
@@ -135,34 +127,17 @@ const AboutSection = () => {
             <ExperienceSlider />
           </motion.div>
 
-          {/* Education */}
+          {/* Education & Certificates */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
             <h3 className="text-xl font-display font-semibold mb-6 flex items-center gap-2">
-              <GlowIcon Icon={GraduationCap} size={24} className="text-primary" />
+              <GlowIcon Icon={Award} size={24} className="text-primary" />
               Education & Certificates
             </h3>
-            <div className="space-y-3">
-              {education.map((edu, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={isInView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.4, delay: 0.7 + index * 0.1 }}
-                  whileHover={{ scale: 1.02, x: 5 }}
-                  className="glass-card p-4 hover-glow cursor-pointer"
-                >
-                  <p className="font-medium text-sm mb-1">
-                    {edu.degree}
-                  </p>
-                  <p className="text-primary text-sm">@{edu.institution}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{edu.period}</p>
-                </motion.div>
-              ))}
-            </div>
+            <CertificatesSection />
           </motion.div>
         </div>
       </div>
