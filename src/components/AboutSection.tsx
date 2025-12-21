@@ -3,26 +3,8 @@ import { useRef } from 'react';
 import { FileText, MessageCircle, Briefcase, GraduationCap } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { AnimatedWave, AnimatedPeace, GlowIcon } from './AnimatedIcon';
+import ExperienceSlider from './ExperienceSlider';
 import menaProfile from '@/assets/mena-profile.png';
-
-const experiences = [
-  { company: 'Wida', role: 'Web Developer', period: 'Jan 2025 - Present', logo: 'WD' },
-  { company: 'Sunweb Solution', role: 'Team Leader', period: 'Apr 2023 - Present', logo: 'SW' },
-  { company: 'Pessarde', role: 'Senior Web Developer', period: 'Jan 2024 - Mar 2025', logo: 'PS' },
-  { company: 'SUNGROUP', role: 'Team Leader', period: 'May 2020 - Present', logo: 'SG' },
-  { company: 'Winmarket Agency', role: 'Team Leader', period: 'May 2020 - Present', logo: 'WM' },
-  { company: 'Entreprenelle', role: 'Web Developer', period: 'May 2020 - Dec 2025', logo: 'EN' },
-  { company: 'SOFM', role: 'Web Developer', period: 'May 2020 - Dec 2022', logo: 'SF' },
-  { company: 'Makyn', role: 'Web Developer & Designer', period: 'Jan 2022 - Oct 2023', logo: 'MK' },
-  { company: 'Silvertech', role: 'Team Leader', period: 'Feb 2019', logo: 'ST' },
-  { company: 'IT Sharks', role: 'Instructor', period: 'Feb 2019', logo: 'IT' },
-  { company: 'Maaref', role: 'Instructor', period: 'Feb 2019', logo: 'M3' },
-  { company: 'Netlab Academy', role: 'CEO - Founder', period: 'Jan 2018', logo: 'NL' },
-  { company: 'Kingston Business', role: 'Web Developer & Instructor', period: 'Jan 2018', logo: 'KB' },
-  { company: 'Undercontrol', role: 'Web Developer', period: 'Jan 2019', logo: 'UC' },
-  { company: 'TeraCourses', role: 'Instructor', period: 'Jan 2024', logo: 'TC' },
-  { company: 'Udemy', role: 'Instructor', period: 'Jan 2025', logo: 'UD' },
-];
 
 const education = [
   { institution: 'Suez Canal University', degree: 'Commerce, Business, Management', period: '2021 - Present' },
@@ -140,7 +122,7 @@ const AboutSection = () => {
             </div>
           </motion.div>
 
-          {/* Experience */}
+          {/* Experience Slider */}
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -148,30 +130,9 @@ const AboutSection = () => {
           >
             <h3 className="text-xl font-display font-semibold mb-6 flex items-center gap-2">
               <GlowIcon Icon={Briefcase} size={24} className="text-primary" />
-              Experience
+              Companies I Worked With
             </h3>
-            <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-              {experiences.map((exp, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={isInView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.4, delay: 0.5 + index * 0.05 }}
-                  whileHover={{ scale: 1.02, x: 5 }}
-                  className="glass-card p-3 flex items-center gap-3 hover-glow cursor-pointer"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-primary font-bold text-xs border border-primary/30">
-                    {exp.logo}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">
-                      {exp.role} <span className="text-primary">@{exp.company}</span>
-                    </p>
-                    <p className="text-xs text-muted-foreground">{exp.period}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+            <ExperienceSlider />
           </motion.div>
 
           {/* Education */}
