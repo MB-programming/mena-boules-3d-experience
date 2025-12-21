@@ -23,9 +23,9 @@ const Navbar = () => {
   ];
 
   const languages = [
-    { code: 'en', label: 'English', flag: '🇺🇸' },
-    { code: 'ar', label: 'العربية', flag: '🇪🇬' },
-    { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
+    { code: 'en', label: 'English' },
+    { code: 'ar', label: 'العربية' },
+    { code: 'de', label: 'Deutsch' },
   ];
 
   const currentLang = languages.find(l => l.code === language) || languages[0];
@@ -96,7 +96,7 @@ const Navbar = () => {
                 whileTap={{ scale: 0.95 }}
               >
                 <Globe className="w-4 h-4" />
-                <span className="text-sm font-medium">{currentLang.flag} {currentLang.code.toUpperCase()}</span>
+                <span className="text-sm font-medium">{currentLang.code.toUpperCase()}</span>
               </motion.button>
 
               <AnimatePresence>
@@ -106,7 +106,7 @@ const Navbar = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute top-full right-0 mt-2 w-40 glass-card rounded-xl overflow-hidden shadow-xl z-50"
+                    className="absolute top-full right-0 mt-2 w-40 bg-background border border-border rounded-xl overflow-hidden shadow-xl z-50"
                   >
                     {languages.map((lang) => (
                       <button
@@ -118,10 +118,7 @@ const Navbar = () => {
                             : 'text-foreground hover:bg-muted/50'
                         }`}
                       >
-                        <span className="flex items-center gap-2">
-                          <span>{lang.flag}</span>
-                          <span>{lang.label}</span>
-                        </span>
+                        <span>{lang.label}</span>
                         {language === lang.code && <Check className="w-4 h-4" />}
                       </button>
                     ))}
@@ -137,7 +134,7 @@ const Navbar = () => {
                 whileTap={{ scale: 0.95 }}
               >
                 <User className="w-4 h-4" />
-                Login
+                {t('auth.login')}
               </motion.button>
             </Link>
 
@@ -186,7 +183,7 @@ const Navbar = () => {
                   className="btn-primary text-center"
                   onClick={() => setIsOpen(false)}
                 >
-                  Login / Sign Up
+                  {t('auth.loginSignup')}
                 </Link>
               </div>
             </motion.div>
