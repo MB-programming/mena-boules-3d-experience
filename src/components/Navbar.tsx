@@ -13,7 +13,7 @@ const Navbar = () => {
   const navItems = [
     { key: 'nav.home', href: isHomePage ? '#home' : '/' },
     { key: 'nav.services', href: isHomePage ? '#services' : '/#services' },
-    { key: 'nav.projects', href: isHomePage ? '#projects' : '/#projects' },
+    { key: 'nav.projects', href: '/projects' },
     { key: 'nav.courses', href: '/courses' },
     { key: 'nav.about', href: isHomePage ? '#about' : '/#about' },
     { key: 'nav.contact', href: isHomePage ? '#contact' : '/#contact' },
