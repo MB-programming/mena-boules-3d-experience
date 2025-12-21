@@ -390,6 +390,14 @@ const translations = {
     'common.modernUiux': 'Modern UI/UX',
     'common.crossBrowser': 'Cross-Browser Compatible',
     'common.mobileFirst': 'Mobile First Approach',
+    
+    // Notifications
+    'notifications.title': 'Notifications',
+    'notifications.markAllRead': 'Mark all as read',
+    'notifications.empty': 'No notifications',
+    'notifications.fundsConfirmed': 'Funds Confirmed',
+    'notifications.requestReviewing': 'Request Under Review',
+    'notifications.newCourse': 'New Course Available',
   },
   ar: {
     // Navigation
@@ -771,6 +779,14 @@ const translations = {
     'common.modernUiux': 'تصميم UI/UX حديث',
     'common.crossBrowser': 'متوافق مع جميع المتصفحات',
     'common.mobileFirst': 'أولوية للجوال',
+    
+    // Notifications
+    'notifications.title': 'الإشعارات',
+    'notifications.markAllRead': 'تحديد الكل كمقروء',
+    'notifications.empty': 'لا توجد إشعارات',
+    'notifications.fundsConfirmed': 'تم تأكيد الرصيد',
+    'notifications.requestReviewing': 'طلب قيد المراجعة',
+    'notifications.newCourse': 'كورس جديد متاح',
   },
   de: {
     // Navigation
@@ -1152,6 +1168,14 @@ const translations = {
     'common.modernUiux': 'Modernes UI/UX',
     'common.crossBrowser': 'Browser-kompatibel',
     'common.mobileFirst': 'Mobile-First-Ansatz',
+    
+    // Notifications
+    'notifications.title': 'Benachrichtigungen',
+    'notifications.markAllRead': 'Alle als gelesen markieren',
+    'notifications.empty': 'Keine Benachrichtigungen',
+    'notifications.fundsConfirmed': 'Guthaben bestätigt',
+    'notifications.requestReviewing': 'Anfrage wird überprüft',
+    'notifications.newCourse': 'Neuer Kurs verfügbar',
   },
 };
 
