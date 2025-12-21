@@ -42,8 +42,8 @@ const Profile = () => {
   ];
 
   const certificates = [
-    { id: 1, title: 'Web Development Fundamentals', date: 'Dec 2024' },
-    { id: 2, title: 'React Basics', date: 'Nov 2024' },
+    { id: '1', title: 'Web Development Fundamentals', date: 'Dec 2024', courseId: 'WD-001' },
+    { id: '2', title: 'React Basics', date: 'Nov 2024', courseId: 'RB-001' },
   ];
 
   const [wishlist, setWishlist] = useState([
@@ -404,19 +404,23 @@ const Profile = () => {
                 </h3>
                 <div className="grid sm:grid-cols-2 gap-4">
                   {certificates.map((cert) => (
-                    <motion.div
+                    <Link
                       key={cert.id}
-                      whileHover={{ scale: 1.02 }}
-                      className="glass-card p-4 hover-glow cursor-pointer"
+                      to={`/certificate/${cert.id}`}
                     >
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-medium mb-1">{cert.title}</h4>
-                          <p className="text-sm text-muted-foreground">{cert.date}</p>
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        className="glass-card p-4 hover-glow cursor-pointer"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h4 className="font-medium mb-1">{cert.title}</h4>
+                            <p className="text-sm text-muted-foreground">{cert.date}</p>
+                          </div>
+                          <AnimatedSparkle />
                         </div>
-                        <AnimatedSparkle />
-                      </div>
-                    </motion.div>
+                      </motion.div>
+                    </Link>
                   ))}
                 </div>
               </div>
