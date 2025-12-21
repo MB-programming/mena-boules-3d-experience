@@ -18,16 +18,28 @@ import {
   History,
   Heart,
   Trash2,
-  ShoppingCart
+  ShoppingCart,
+  Smartphone,
+  Copy,
+  Check
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 import { AnimatedSparkle, GlowIcon } from '@/components/AnimatedIcon';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const Profile = () => {
+  const { t, language } = useLanguage();
+  const isAr = language === 'ar';
+  const currency = isAr ? 'ج.م' : 'EGP';
+  
   const [isEditing, setIsEditing] = useState(false);
   const [showAddFunds, setShowAddFunds] = useState(false);
   const [addAmount, setAddAmount] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<'instapay' | 'vodafone'>('instapay');
+  const [transactionRef, setTransactionRef] = useState('');
+  const [copiedInstapay, setCopiedInstapay] = useState(false);
+  const [copiedVodafone, setCopiedVodafone] = useState(false);
   const [profile, setProfile] = useState({
     name: 'Ahmed Mohamed',
     email: 'ahmed@example.com',
@@ -63,16 +75,34 @@ const Profile = () => {
     toast.success('Profile updated successfully!');
   };
 
-  const handleAddFunds = () => {
-    if (addAmount && parseFloat(addAmount) > 0) {
-      setProfile(prev => ({
-        ...prev,
-        walletBalance: prev.walletBalance + parseFloat(addAmount)
-      }));
-      setAddAmount('');
-      setShowAddFunds(false);
-      toast.success(`$${addAmount} added to your wallet!`);
+  const copyToClipboard = (text: string, type: 'instapay' | 'vodafone') => {
+    navigator.clipboard.writeText(text);
+    if (type === 'instapay') {
+      setCopiedInstapay(true);
+      setTimeout(() => setCopiedInstapay(false), 2000);
+    } else {
+      setCopiedVodafone(true);
+      setTimeout(() => setCopiedVodafone(false), 2000);
     }
+    toast.success(t('checkout.copied'));
+  };
+
+  const handleAddFunds = () => {
+    if (!addAmount || parseFloat(addAmount) <= 0) {
+      toast.error(t('profile.enterAmount'));
+      return;
+    }
+    
+    if (!transactionRef.trim()) {
+      toast.error(t('checkout.refRequired'));
+      return;
+    }
+
+    // Simulate adding funds after verification
+    toast.success(t('profile.fundsRequestSubmitted'));
+    setAddAmount('');
+    setTransactionRef('');
+    setShowAddFunds(false);
   };
 
   const removeFromWishlist = (id: number) => {
@@ -186,14 +216,14 @@ const Profile = () => {
               <div>
                 <h3 className="text-xl font-display font-semibold mb-4 flex items-center gap-2">
                   <GlowIcon Icon={Wallet} size={24} className="text-primary" />
-                  My Wallet
+                  {t('profile.myWallet')}
                 </h3>
                 <div className="glass-card p-6 hover-glow">
                   <div className="flex items-center justify-between mb-6">
                     <div>
-                      <p className="text-sm text-muted-foreground mb-1">Available Balance</p>
+                      <p className="text-sm text-muted-foreground mb-1">{t('profile.availableBalance')}</p>
                       <p className="text-4xl font-display font-bold gradient-text">
-                        ${profile.walletBalance.toFixed(2)}
+                        {profile.walletBalance.toFixed(0)} {currency}
                       </p>
                     </div>
                     <motion.button
@@ -203,58 +233,191 @@ const Profile = () => {
                       className="btn-primary flex items-center gap-2"
                     >
                       <Plus className="w-4 h-4" />
-                      Add Funds
+                      {t('profile.addFunds')}
                     </motion.button>
                   </div>
 
-                  {/* Add Funds Form */}
+                  {/* Add Funds Form with Payment Methods */}
                   {showAddFunds && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
-                      className="mb-6 p-4 bg-primary/5 rounded-xl border border-primary/20"
+                      className="mb-6 space-y-4"
                     >
-                      <h4 className="font-medium mb-3 flex items-center gap-2">
-                        <CreditCard className="w-4 h-4 text-primary" />
-                        Add Funds to Wallet
-                      </h4>
-                      <div className="flex gap-2 mb-3">
-                        {[25, 50, 100, 200].map((amount) => (
-                          <motion.button
-                            key={amount}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => setAddAmount(amount.toString())}
-                            className={`px-4 py-2 rounded-lg border ${
-                              addAmount === amount.toString()
-                                ? 'border-primary bg-primary/10 text-primary'
-                                : 'border-border hover:border-primary/50'
-                            }`}
-                          >
-                            ${amount}
-                          </motion.button>
-                        ))}
-                      </div>
-                      <div className="flex gap-2">
-                        <div className="relative flex-1">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                      {/* Amount Selection */}
+                      <div className="p-4 bg-primary/5 rounded-xl border border-primary/20">
+                        <h4 className="font-medium mb-3 flex items-center gap-2">
+                          <CreditCard className="w-4 h-4 text-primary" />
+                          {t('profile.selectAmount')}
+                        </h4>
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {[50, 100, 200, 500].map((amount) => (
+                            <motion.button
+                              key={amount}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() => setAddAmount(amount.toString())}
+                              className={`px-4 py-2 rounded-lg border ${
+                                addAmount === amount.toString()
+                                  ? 'border-primary bg-primary/10 text-primary'
+                                  : 'border-border hover:border-primary/50'
+                              }`}
+                            >
+                              {amount} {currency}
+                            </motion.button>
+                          ))}
+                        </div>
+                        <div className="relative">
                           <input
                             type="number"
                             value={addAmount}
                             onChange={(e) => setAddAmount(e.target.value)}
-                            placeholder="Custom amount"
-                            className="w-full pl-8 pr-4 py-2 bg-input rounded-lg border border-border"
+                            placeholder={t('profile.customAmount')}
+                            className="w-full px-4 py-2 bg-input rounded-lg border border-border"
                           />
                         </div>
-                        <motion.button
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={handleAddFunds}
-                          className="btn-primary px-6"
-                        >
-                          Add
-                        </motion.button>
                       </div>
+
+                      {/* Payment Method Selection */}
+                      <div className="space-y-3">
+                        <h4 className="font-medium">{t('checkout.paymentMethod')}</h4>
+                        
+                        {/* InstaPay Option */}
+                        <motion.div
+                          whileHover={{ scale: 1.01 }}
+                          onClick={() => setPaymentMethod('instapay')}
+                          className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                            paymentMethod === 'instapay'
+                              ? 'border-blue-500 bg-blue-500/10'
+                              : 'border-border hover:border-blue-500/50'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="p-2 rounded-lg bg-blue-500/20 text-blue-500">
+                              <CreditCard className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <p className="font-medium">{t('checkout.instapay')}</p>
+                              <p className="text-sm text-muted-foreground">{t('checkout.instantTransfer')}</p>
+                            </div>
+                          </div>
+                          
+                          {paymentMethod === 'instapay' && (
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              className="space-y-3 pt-3 border-t border-blue-500/20"
+                            >
+                              <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
+                                <li>{t('checkout.openBankApp')}</li>
+                                <li>{t('checkout.chooseInstapay')}</li>
+                                <li>{t('checkout.enterAccount')}</li>
+                              </ol>
+                              <div className="flex items-center gap-2 bg-background/50 p-3 rounded-lg">
+                                <code className="flex-1 text-blue-400 font-mono">mina_boules@instapay</code>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    copyToClipboard('mina_boules@instapay', 'instapay');
+                                  }}
+                                  className="p-2 hover:bg-blue-500/20 rounded-lg transition-colors"
+                                >
+                                  {copiedInstapay ? (
+                                    <Check className="w-4 h-4 text-green-500" />
+                                  ) : (
+                                    <Copy className="w-4 h-4" />
+                                  )}
+                                </button>
+                              </div>
+                              {addAmount && (
+                                <p className="text-sm">
+                                  {t('checkout.enterAmount')}: <strong className="text-primary">{addAmount} {currency}</strong>
+                                </p>
+                              )}
+                            </motion.div>
+                          )}
+                        </motion.div>
+
+                        {/* Vodafone Cash Option */}
+                        <motion.div
+                          whileHover={{ scale: 1.01 }}
+                          onClick={() => setPaymentMethod('vodafone')}
+                          className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                            paymentMethod === 'vodafone'
+                              ? 'border-red-500 bg-red-500/10'
+                              : 'border-border hover:border-red-500/50'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="p-2 rounded-lg bg-red-500/20 text-red-500">
+                              <Smartphone className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <p className="font-medium">{t('checkout.vodafone')}</p>
+                              <p className="text-sm text-muted-foreground">{t('checkout.mobileWallet')}</p>
+                            </div>
+                          </div>
+                          
+                          {paymentMethod === 'vodafone' && (
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              className="space-y-3 pt-3 border-t border-red-500/20"
+                            >
+                              <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
+                                <li>{t('checkout.openVodafone')}</li>
+                                <li>{t('checkout.chooseSendMoney')}</li>
+                                <li>{t('checkout.enterNumber')}</li>
+                              </ol>
+                              <div className="flex items-center gap-2 bg-background/50 p-3 rounded-lg">
+                                <code className="flex-1 text-red-400 font-mono text-lg">01014959132</code>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    copyToClipboard('01014959132', 'vodafone');
+                                  }}
+                                  className="p-2 hover:bg-red-500/20 rounded-lg transition-colors"
+                                >
+                                  {copiedVodafone ? (
+                                    <Check className="w-4 h-4 text-green-500" />
+                                  ) : (
+                                    <Copy className="w-4 h-4" />
+                                  )}
+                                </button>
+                              </div>
+                              {addAmount && (
+                                <p className="text-sm">
+                                  {t('checkout.enterAmount')}: <strong className="text-primary">{addAmount} {currency}</strong>
+                                </p>
+                              )}
+                            </motion.div>
+                          )}
+                        </motion.div>
+                      </div>
+
+                      {/* Transaction Reference */}
+                      <div className="p-4 bg-muted/30 rounded-xl">
+                        <label className="block text-sm font-medium mb-2">
+                          {t('checkout.transactionRef')}
+                        </label>
+                        <input
+                          type="text"
+                          value={transactionRef}
+                          onChange={(e) => setTransactionRef(e.target.value)}
+                          placeholder={t('checkout.enterRefAfter')}
+                          className="w-full px-4 py-2 bg-input rounded-lg border border-border"
+                        />
+                      </div>
+
+                      {/* Submit Button */}
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleAddFunds}
+                        className="w-full btn-primary py-3"
+                      >
+                        {t('profile.submitFundsRequest')}
+                      </motion.button>
                     </motion.div>
                   )}
 

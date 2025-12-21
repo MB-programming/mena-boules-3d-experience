@@ -308,6 +308,11 @@ const translations = {
     'profile.profileUpdated': 'Profile updated successfully!',
     'profile.fundsAdded': 'added to your wallet!',
     'profile.removedFromWishlist': 'Removed from wishlist',
+    'profile.selectAmount': 'Select Amount',
+    'profile.customAmount': 'Custom amount',
+    'profile.enterAmount': 'Please enter an amount',
+    'profile.fundsRequestSubmitted': 'Your request has been submitted! Funds will be added after verification.',
+    'profile.submitFundsRequest': 'Submit Request',
     
     // Checkout
     'checkout.title': 'Checkout',
@@ -675,6 +680,11 @@ const translations = {
     'profile.profileUpdated': 'تم تحديث الملف الشخصي بنجاح!',
     'profile.fundsAdded': 'تمت إضافتها لمحفظتك!',
     'profile.removedFromWishlist': 'تم الحذف من المفضلة',
+    'profile.selectAmount': 'اختر المبلغ',
+    'profile.customAmount': 'مبلغ مخصص',
+    'profile.enterAmount': 'يرجى إدخال المبلغ',
+    'profile.fundsRequestSubmitted': 'تم إرسال طلبك! سيتم إضافة الرصيد بعد التحقق.',
+    'profile.submitFundsRequest': 'إرسال الطلب',
     
     // Checkout
     'checkout.title': 'إتمام الشراء',
@@ -1042,6 +1052,11 @@ const translations = {
     'profile.profileUpdated': 'Profil erfolgreich aktualisiert!',
     'profile.fundsAdded': 'zu Ihrer Geldbörse hinzugefügt!',
     'profile.removedFromWishlist': 'Von Wunschliste entfernt',
+    'profile.selectAmount': 'Betrag auswählen',
+    'profile.customAmount': 'Benutzerdefinierter Betrag',
+    'profile.enterAmount': 'Bitte geben Sie einen Betrag ein',
+    'profile.fundsRequestSubmitted': 'Ihre Anfrage wurde übermittelt! Das Guthaben wird nach der Überprüfung hinzugefügt.',
+    'profile.submitFundsRequest': 'Anfrage senden',
     
     // Checkout
     'checkout.title': 'Kasse',
