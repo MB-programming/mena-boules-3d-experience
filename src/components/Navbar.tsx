@@ -1,19 +1,22 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Globe } from 'lucide-react';
+import { Menu, X, Globe, User } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   const navItems = [
-    { key: 'nav.home', href: '#home' },
-    { key: 'nav.about', href: '#about' },
-    { key: 'nav.skills', href: '#skills' },
-    { key: 'nav.projects', href: '#projects' },
-    { key: 'nav.courses', href: '#courses' },
-    { key: 'nav.contact', href: '#contact' },
+    { key: 'nav.home', href: isHomePage ? '#home' : '/' },
+    { key: 'nav.services', href: isHomePage ? '#services' : '/#services' },
+    { key: 'nav.projects', href: isHomePage ? '#projects' : '/#projects' },
+    { key: 'nav.courses', href: '/courses' },
+    { key: 'nav.about', href: isHomePage ? '#about' : '/#about' },
+    { key: 'nav.contact', href: isHomePage ? '#contact' : '/#contact' },
   ];
 
   const toggleLanguage = () => {
@@ -30,29 +33,37 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto">
         <div className="glass-card px-6 py-3 flex items-center justify-between">
           {/* Logo */}
-          <motion.a
-            href="#home"
-            className="text-2xl font-display font-bold gradient-text"
-            whileHover={{ scale: 1.05 }}
-          >
-            MB
-          </motion.a>
+          <motion.div whileHover={{ scale: 1.05 }}>
+            <Link to="/" className="text-2xl font-display font-bold gradient-text">
+              mina.
+            </Link>
+          </motion.div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
-              <a
-                key={item.key}
-                href={item.href}
-                className="nav-link font-medium"
-              >
-                {t(item.key)}
-              </a>
+              item.href.startsWith('/') && !item.href.includes('#') ? (
+                <Link
+                  key={item.key}
+                  to={item.href}
+                  className="nav-link font-medium"
+                >
+                  {t(item.key)}
+                </Link>
+              ) : (
+                <a
+                  key={item.key}
+                  href={item.href}
+                  className="nav-link font-medium"
+                >
+                  {t(item.key)}
+                </a>
+              )
             ))}
           </div>
 
-          {/* Language Toggle & Mobile Menu Button */}
-          <div className="flex items-center gap-4">
+          {/* Actions */}
+          <div className="flex items-center gap-3">
             <motion.button
               onClick={toggleLanguage}
               className="flex items-center gap-2 px-3 py-2 rounded-lg border border-primary/30 text-primary hover:bg-primary/10 transition-all"
@@ -62,6 +73,17 @@ const Navbar = () => {
               <Globe className="w-4 h-4" />
               <span className="text-sm font-medium">{language === 'en' ? 'عربي' : 'EN'}</span>
             </motion.button>
+
+            <Link to="/auth">
+              <motion.button
+                className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <User className="w-4 h-4" />
+                Login
+              </motion.button>
+            </Link>
 
             <button
               className="md:hidden text-foreground"
@@ -83,15 +105,33 @@ const Navbar = () => {
             >
               <div className="px-6 py-4 flex flex-col gap-4">
                 {navItems.map((item) => (
-                  <a
-                    key={item.key}
-                    href={item.href}
-                    className="nav-link font-medium py-2"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {t(item.key)}
-                  </a>
+                  item.href.startsWith('/') && !item.href.includes('#') ? (
+                    <Link
+                      key={item.key}
+                      to={item.href}
+                      className="nav-link font-medium py-2"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {t(item.key)}
+                    </Link>
+                  ) : (
+                    <a
+                      key={item.key}
+                      href={item.href}
+                      className="nav-link font-medium py-2"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {t(item.key)}
+                    </a>
+                  )
                 ))}
+                <Link
+                  to="/auth"
+                  className="btn-primary text-center"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Login / Sign Up
+                </Link>
               </div>
             </motion.div>
           )}
