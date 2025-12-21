@@ -21,6 +21,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Certificate from "./pages/Certificate";
 import VerifyCertificate from "./pages/VerifyCertificate";
+import Quotation from "./pages/Quotation";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/certificate/:id" element={<Certificate />} />
             <Route path="/verify" element={<VerifyCertificate />} />
+            <Route path="/quotation/:id" element={<Quotation />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
