@@ -313,6 +313,15 @@ const translations = {
     'profile.enterAmount': 'Please enter an amount',
     'profile.fundsRequestSubmitted': 'Your request has been submitted! Funds will be added after verification.',
     'profile.submitFundsRequest': 'Submit Request',
+    'profile.pendingRequests': 'Pending Requests',
+    'profile.pending': 'Pending',
+    'profile.reviewing': 'Reviewing',
+    'profile.transactionHistory': 'Transaction History',
+    'profile.changePassword': 'Change Password',
+    'profile.currentPassword': 'Current Password',
+    'profile.savePassword': 'Save Password',
+    'profile.enterCurrentPassword': 'Please enter your current password',
+    'profile.passwordChanged': 'Password changed successfully!',
     
     // Checkout
     'checkout.title': 'Checkout',
@@ -685,6 +694,15 @@ const translations = {
     'profile.enterAmount': 'يرجى إدخال المبلغ',
     'profile.fundsRequestSubmitted': 'تم إرسال طلبك! سيتم إضافة الرصيد بعد التحقق.',
     'profile.submitFundsRequest': 'إرسال الطلب',
+    'profile.pendingRequests': 'الطلبات المعلقة',
+    'profile.pending': 'قيد الانتظار',
+    'profile.reviewing': 'قيد المراجعة',
+    'profile.transactionHistory': 'سجل المعاملات',
+    'profile.changePassword': 'تغيير كلمة المرور',
+    'profile.currentPassword': 'كلمة المرور الحالية',
+    'profile.savePassword': 'حفظ كلمة المرور',
+    'profile.enterCurrentPassword': 'يرجى إدخال كلمة المرور الحالية',
+    'profile.passwordChanged': 'تم تغيير كلمة المرور بنجاح!',
     
     // Checkout
     'checkout.title': 'إتمام الشراء',
@@ -1057,6 +1075,15 @@ const translations = {
     'profile.enterAmount': 'Bitte geben Sie einen Betrag ein',
     'profile.fundsRequestSubmitted': 'Ihre Anfrage wurde übermittelt! Das Guthaben wird nach der Überprüfung hinzugefügt.',
     'profile.submitFundsRequest': 'Anfrage senden',
+    'profile.pendingRequests': 'Ausstehende Anfragen',
+    'profile.pending': 'Ausstehend',
+    'profile.reviewing': 'Wird überprüft',
+    'profile.transactionHistory': 'Transaktionsverlauf',
+    'profile.changePassword': 'Passwort ändern',
+    'profile.currentPassword': 'Aktuelles Passwort',
+    'profile.savePassword': 'Passwort speichern',
+    'profile.enterCurrentPassword': 'Bitte geben Sie Ihr aktuelles Passwort ein',
+    'profile.passwordChanged': 'Passwort erfolgreich geändert!',
     
     // Checkout
     'checkout.title': 'Kasse',
