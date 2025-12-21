@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { 
@@ -105,6 +105,19 @@ const CourseDetail = () => {
   const navigate = useNavigate();
   const [expandedSections, setExpandedSections] = useState<number[]>([0]);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handleVideoToggle = () => {
+    if (videoRef.current) {
+      if (isVideoPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsVideoPlaying(!isVideoPlaying);
+    }
+  };
 
   const toggleSection = (index: number) => {
     setExpandedSections(prev => 
@@ -215,21 +228,39 @@ const CourseDetail = () => {
                 className="lg:row-span-2"
               >
                 <div className="glass-card p-6 sticky top-24">
-                  {/* Preview */}
+                  {/* Preview Video */}
                   <div className="relative mb-6 rounded-xl overflow-hidden">
-                    <img
-                      src={courseData.image}
-                      alt="Preview"
+                    <video
+                      ref={videoRef}
+                      src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                      poster={courseData.image}
                       className="w-full h-40 object-cover"
+                      onEnded={() => setIsVideoPlaying(false)}
+                      onPause={() => setIsVideoPlaying(false)}
+                      onPlay={() => setIsVideoPlaying(true)}
                     />
                     <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      className="absolute inset-0 flex items-center justify-center bg-black/50"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleVideoToggle}
+                      className="absolute inset-0 flex items-center justify-center bg-black/40 hover:bg-black/50 transition-colors cursor-pointer"
                     >
                       <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center">
-                        <Play className="w-7 h-7 ml-1 text-primary-foreground" fill="currentColor" />
+                        {isVideoPlaying ? (
+                          <div className="w-5 h-5 flex gap-1">
+                            <div className="w-1.5 h-5 bg-primary-foreground rounded" />
+                            <div className="w-1.5 h-5 bg-primary-foreground rounded" />
+                          </div>
+                        ) : (
+                          <Play className="w-7 h-7 ml-1 text-primary-foreground" fill="currentColor" />
+                        )}
                       </div>
                     </motion.button>
+                    <div className="absolute bottom-2 left-2">
+                      <span className="text-xs px-2 py-1 rounded bg-black/60 text-white">
+                        {isVideoPlaying ? 'Playing...' : 'Preview Video'}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Price */}
