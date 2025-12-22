@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# PHP
+api/.env
+vendor/
+composer.lock
+*.cache
