@@ -620,3 +620,256 @@ INSERT INTO certificates (certificate_name, issuer, year, logo_bg_color, display
 ('Certified Technology Trainer', '@Ministry of Education', '2019 - 2025', '#86efac', 3, 1),
 ('Commerce, Business, Management', '@Suez Canal University', '2021 - Present', '#fbbf24', 4, 1),
 ('Microsoft Technology Associate', '@Microsoft', '2022', '#64748b', 5, 1);
+
+-- Blog Categories table
+CREATE TABLE IF NOT EXISTS blog_categories (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL UNIQUE,
+    description TEXT NULL,
+    color VARCHAR(20) NULL DEFAULT '#667eea',
+    display_order INT(11) DEFAULT 0,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_slug (slug),
+    INDEX idx_is_active (is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Blog Posts table with Advanced SEO
+CREATE TABLE IF NOT EXISTS blog_posts (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(500) NOT NULL,
+    slug VARCHAR(500) NOT NULL UNIQUE,
+    excerpt TEXT NULL,
+    content LONGTEXT NOT NULL,
+    featured_image VARCHAR(500) NULL,
+    author_id INT(11) UNSIGNED NOT NULL,
+    category_id INT(11) UNSIGNED NULL,
+    tags TEXT NULL COMMENT 'Comma-separated tags',
+    status ENUM('draft', 'published', 'scheduled') DEFAULT 'draft',
+    published_at TIMESTAMP NULL,
+    views INT(11) DEFAULT 0,
+    reading_time INT(11) NULL COMMENT 'Reading time in minutes',
+    
+    -- Advanced SEO Fields
+    meta_title VARCHAR(255) NULL,
+    meta_description TEXT NULL,
+    meta_keywords TEXT NULL,
+    canonical_url VARCHAR(500) NULL,
+    robots VARCHAR(100) NULL DEFAULT 'index, follow',
+    
+    -- Open Graph (Facebook, LinkedIn)
+    og_title VARCHAR(255) NULL,
+    og_description TEXT NULL,
+    og_image VARCHAR(500) NULL,
+    og_type VARCHAR(50) NULL DEFAULT 'article',
+    
+    -- Twitter Card
+    twitter_card VARCHAR(50) NULL DEFAULT 'summary_large_image',
+    twitter_title VARCHAR(255) NULL,
+    twitter_description TEXT NULL,
+    twitter_image VARCHAR(500) NULL,
+    
+    -- Schema.org JSON-LD
+    schema_markup LONGTEXT NULL COMMENT 'JSON-LD structured data',
+    
+    is_featured TINYINT(1) DEFAULT 0,
+    allow_comments TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES blog_categories(id) ON DELETE SET NULL,
+    INDEX idx_slug (slug),
+    INDEX idx_status (status),
+    INDEX idx_published_at (published_at),
+    INDEX idx_category_id (category_id),
+    INDEX idx_is_featured (is_featured),
+    INDEX idx_views (views)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Blog Comments table
+CREATE TABLE IF NOT EXISTS blog_comments (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    post_id INT(11) UNSIGNED NOT NULL,
+    user_id INT(11) UNSIGNED NULL,
+    author_name VARCHAR(255) NULL,
+    author_email VARCHAR(255) NULL,
+    comment TEXT NOT NULL,
+    status ENUM('pending', 'approved', 'spam') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (post_id) REFERENCES blog_posts(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_post_id (post_id),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Insert sample blog categories
+INSERT INTO blog_categories (name, slug, description, color, display_order) VALUES
+('3D Modeling', '3d-modeling', 'دروس ومقالات عن التصميم ثلاثي الأبعاد', '#667eea', 1),
+('Web Development', 'web-development', 'برمجة وتطوير المواقع', '#10b981', 2),
+('Game Development', 'game-development', 'تطوير الألعاب والمحركات', '#f59e0b', 3),
+('Tutorials', 'tutorials', 'دروس تعليمية خطوة بخطوة', '#ec4899', 4),
+('News', 'news', 'آخر الأخبار والتحديثات', '#3b82f6', 5);
+
+-- Insert sample blog post
+INSERT INTO blog_posts (
+    title, slug, excerpt, content, author_id, category_id, tags, status, published_at,
+    meta_title, meta_description, meta_keywords,
+    og_title, og_description, og_type,
+    twitter_card, twitter_title, twitter_description,
+    reading_time, is_featured
+) VALUES (
+    'مرحباً بك في مدونة Mena Boules 3D Experience',
+    'welcome-to-blog',
+    'مقدمة عن المدونة والمحتوى الذي ستجده هنا',
+    '<h2>مرحباً بك!</h2><p>هذه أول مقالة في المدونة. ستجد هنا دروس ومقالات عن التصميم ثلاثي الأبعاد، تطوير الويب، وتطوير الألعاب.</p>',
+    1,
+    1,
+    '3D,Blender,Tutorial',
+    'published',
+    NOW(),
+    'مرحباً بك في مدونة Mena Boules | 3D Experience',
+    'تعلم التصميم ثلاثي الأبعاد وتطوير الويب مع دروس احترافية',
+    '3d modeling, blender, web development, tutorials',
+    'مرحباً بك في مدونة Mena Boules',
+    'تعلم التصميم ثلاثي الأبعاد وتطوير الويب',
+    'article',
+    'summary_large_image',
+    'مرحباً بك في مدونة Mena Boules',
+    'تعلم التصميم ثلاثي الأبعاد وتطوير الويب مع دروس احترافية',
+    5,
+    1
+);
+
+-- Wishlist table
+CREATE TABLE IF NOT EXISTS wishlist (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT(11) UNSIGNED NOT NULL,
+    course_id INT(11) UNSIGNED NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_wishlist (user_id, course_id),
+    INDEX idx_user_id (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Course Access Codes (للكورسات المقفولة برقم سري)
+CREATE TABLE IF NOT EXISTS course_access_codes (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    course_id INT(11) UNSIGNED NOT NULL,
+    access_code VARCHAR(50) NOT NULL UNIQUE,
+    max_uses INT(11) NULL COMMENT 'NULL = unlimited',
+    current_uses INT(11) DEFAULT 0,
+    expires_at TIMESTAMP NULL,
+    is_active TINYINT(1) DEFAULT 1,
+    created_by INT(11) UNSIGNED NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_course_id (course_id),
+    INDEX idx_access_code (access_code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Course Curriculum Sections
+CREATE TABLE IF NOT EXISTS course_sections (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    course_id INT(11) UNSIGNED NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NULL,
+    display_order INT(11) DEFAULT 0,
+    is_published TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    INDEX idx_course_id (course_id),
+    INDEX idx_display_order (display_order)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Course Lessons (Video Lessons)
+CREATE TABLE IF NOT EXISTS course_lessons (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    section_id INT(11) UNSIGNED NOT NULL,
+    course_id INT(11) UNSIGNED NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NULL,
+    video_url VARCHAR(500) NULL,
+    video_type ENUM('youtube', 'vimeo', 'direct', 'embed') DEFAULT 'youtube',
+    video_duration INT(11) NULL COMMENT 'Duration in seconds',
+    is_preview TINYINT(1) DEFAULT 0 COMMENT 'Free preview lesson',
+    display_order INT(11) DEFAULT 0,
+    is_published TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (section_id) REFERENCES course_sections(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    INDEX idx_section_id (section_id),
+    INDEX idx_course_id (course_id),
+    INDEX idx_display_order (display_order)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Course Resources (Downloadable files)
+CREATE TABLE IF NOT EXISTS course_resources (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    lesson_id INT(11) UNSIGNED NULL,
+    course_id INT(11) UNSIGNED NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NULL,
+    file_url VARCHAR(500) NOT NULL,
+    file_type VARCHAR(50) NULL COMMENT 'pdf, zip, doc, etc',
+    file_size INT(11) NULL COMMENT 'Size in bytes',
+    download_count INT(11) DEFAULT 0,
+    display_order INT(11) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (lesson_id) REFERENCES course_lessons(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    INDEX idx_lesson_id (lesson_id),
+    INDEX idx_course_id (course_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Course Q&A
+CREATE TABLE IF NOT EXISTS course_qa (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    course_id INT(11) UNSIGNED NOT NULL,
+    lesson_id INT(11) UNSIGNED NULL,
+    user_id INT(11) UNSIGNED NOT NULL,
+    parent_id INT(11) UNSIGNED NULL COMMENT 'For replies',
+    question TEXT NOT NULL,
+    answer TEXT NULL,
+    answered_by INT(11) UNSIGNED NULL,
+    is_pinned TINYINT(1) DEFAULT 0,
+    upvotes INT(11) DEFAULT 0,
+    status ENUM('pending', 'answered', 'closed') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (lesson_id) REFERENCES course_lessons(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (parent_id) REFERENCES course_qa(id) ON DELETE CASCADE,
+    FOREIGN KEY (answered_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_course_id (course_id),
+    INDEX idx_lesson_id (lesson_id),
+    INDEX idx_user_id (user_id),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Insert sample data
+INSERT INTO course_sections (course_id, title, description, display_order) VALUES
+(1, 'Introduction', 'Getting started with the course', 1),
+(1, 'Core Concepts', 'Understanding the fundamentals', 2),
+(1, 'Advanced Topics', 'Deep dive into advanced features', 3);
+
+INSERT INTO course_lessons (section_id, course_id, title, description, video_url, video_type, video_duration, is_preview, display_order) VALUES
+(1, 1, 'Welcome to the Course', 'Introduction and course overview', 'https://youtube.com/watch?v=example1', 'youtube', 300, 1, 1),
+(1, 1, 'Course Requirements', 'What you need to get started', 'https://youtube.com/watch?v=example2', 'youtube', 420, 1, 2),
+(2, 1, 'Lesson 1: Basics', 'Learn the basics', 'https://youtube.com/watch?v=example3', 'youtube', 1800, 0, 1);
+
+INSERT INTO course_resources (lesson_id, course_id, title, file_url, file_type) VALUES
+(1, 1, 'Course Syllabus', 'https://example.com/syllabus.pdf', 'pdf'),
+(2, 1, 'Setup Guide', 'https://example.com/setup.pdf', 'pdf'),
+(3, 1, 'Project Files', 'https://example.com/files.zip', 'zip');
