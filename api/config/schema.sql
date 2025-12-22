@@ -1,7 +1,7 @@
 -- Create database
-CREATE DATABASE IF NOT EXISTS mena_boules_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS u186120816_cv CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE mena_boules_db;
+USE u186120816_cv;
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
