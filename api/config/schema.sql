@@ -228,3 +228,150 @@ CREATE TABLE IF NOT EXISTS quotations (
     INDEX idx_email (email),
     INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Certificates table
+CREATE TABLE IF NOT EXISTS certificates (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    certificate_code VARCHAR(50) NOT NULL UNIQUE,
+    user_id INT(11) UNSIGNED NOT NULL,
+    course_id INT(11) UNSIGNED NOT NULL,
+    student_name VARCHAR(255) NOT NULL,
+    course_title VARCHAR(255) NOT NULL,
+    completion_date DATE NOT NULL,
+    grade VARCHAR(20) NULL,
+    instructor_name VARCHAR(255) NULL,
+    certificate_url VARCHAR(255) NULL COMMENT 'PDF URL if generated',
+    issued_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    INDEX idx_certificate_code (certificate_code),
+    INDEX idx_user_id (user_id),
+    INDEX idx_course_id (course_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Course progress tracking
+CREATE TABLE IF NOT EXISTS course_progress (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT(11) UNSIGNED NOT NULL,
+    course_id INT(11) UNSIGNED NOT NULL,
+    lesson_id INT(11) UNSIGNED NULL,
+    progress_percentage INT(11) DEFAULT 0,
+    last_watched_lesson INT(11) UNSIGNED NULL,
+    watch_time INT(11) DEFAULT 0 COMMENT 'Total watch time in seconds',
+    completed TINYINT(1) DEFAULT 0,
+    completed_at TIMESTAMP NULL,
+    last_accessed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (lesson_id) REFERENCES course_lessons(id) ON DELETE SET NULL,
+    UNIQUE KEY unique_user_course (user_id, course_id),
+    INDEX idx_user_id (user_id),
+    INDEX idx_course_id (course_id),
+    INDEX idx_completed (completed)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Lesson progress tracking
+CREATE TABLE IF NOT EXISTS lesson_progress (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT(11) UNSIGNED NOT NULL,
+    lesson_id INT(11) UNSIGNED NOT NULL,
+    course_id INT(11) UNSIGNED NOT NULL,
+    watched TINYINT(1) DEFAULT 0,
+    watch_duration INT(11) DEFAULT 0 COMMENT 'Watched duration in seconds',
+    completed TINYINT(1) DEFAULT 0,
+    completed_at TIMESTAMP NULL,
+    last_position INT(11) DEFAULT 0 COMMENT 'Last position in seconds',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (lesson_id) REFERENCES course_lessons(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_user_lesson (user_id, lesson_id),
+    INDEX idx_user_id (user_id),
+    INDEX idx_lesson_id (lesson_id),
+    INDEX idx_course_id (course_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Shopping cart
+CREATE TABLE IF NOT EXISTS cart (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT(11) UNSIGNED NOT NULL,
+    course_id INT(11) UNSIGNED NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_user_course (user_id, course_id),
+    INDEX idx_user_id (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Orders/Transactions
+CREATE TABLE IF NOT EXISTS orders (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    order_number VARCHAR(50) NOT NULL UNIQUE,
+    user_id INT(11) UNSIGNED NOT NULL,
+    total_amount DECIMAL(10, 2) NOT NULL,
+    discount_amount DECIMAL(10, 2) DEFAULT 0.00,
+    final_amount DECIMAL(10, 2) NOT NULL,
+    payment_method ENUM('wallet', 'credit_card', 'paypal', 'bank_transfer', 'cash') DEFAULT 'wallet',
+    payment_status ENUM('pending', 'processing', 'completed', 'failed', 'refunded') DEFAULT 'pending',
+    transaction_id VARCHAR(255) NULL COMMENT 'External payment gateway transaction ID',
+    notes TEXT NULL,
+    ip_address VARCHAR(45) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    paid_at TIMESTAMP NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_order_number (order_number),
+    INDEX idx_user_id (user_id),
+    INDEX idx_payment_status (payment_status),
+    INDEX idx_created_at (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Order items
+CREATE TABLE IF NOT EXISTS order_items (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    order_id INT(11) UNSIGNED NOT NULL,
+    course_id INT(11) UNSIGNED NOT NULL,
+    course_title VARCHAR(255) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    INDEX idx_order_id (order_id),
+    INDEX idx_course_id (course_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- User wallet
+CREATE TABLE IF NOT EXISTS wallet (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT(11) UNSIGNED NOT NULL UNIQUE,
+    balance DECIMAL(10, 2) DEFAULT 0.00,
+    total_deposited DECIMAL(10, 2) DEFAULT 0.00,
+    total_spent DECIMAL(10, 2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Wallet transactions
+CREATE TABLE IF NOT EXISTS wallet_transactions (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT(11) UNSIGNED NOT NULL,
+    transaction_type ENUM('deposit', 'withdrawal', 'purchase', 'refund', 'bonus') NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    balance_before DECIMAL(10, 2) NOT NULL,
+    balance_after DECIMAL(10, 2) NOT NULL,
+    description TEXT NULL,
+    reference_type VARCHAR(50) NULL COMMENT 'order, course, etc',
+    reference_id INT(11) UNSIGNED NULL,
+    payment_method VARCHAR(50) NULL,
+    status ENUM('pending', 'completed', 'failed', 'cancelled') DEFAULT 'completed',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id),
+    INDEX idx_transaction_type (transaction_type),
+    INDEX idx_status (status),
+    INDEX idx_created_at (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
