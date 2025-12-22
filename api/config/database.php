@@ -4,15 +4,15 @@
  */
 
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'mena_boules_db');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_NAME', 'u186120816_cv');
+define('DB_USER', 'u186120816_cv');
+define('DB_PASS', '?36PRDYk');
 define('DB_CHARSET', 'utf8mb4');
 
 // Application Settings
 define('APP_NAME', 'Mena Boules 3D Experience');
-define('APP_URL', 'http://localhost:5173');
-define('API_URL', 'http://localhost/mena-boules-3d-experience/api');
+define('APP_URL', 'https://minaboules.com');
+define('API_URL', 'https://academy.karizmatek.com/api');
 
 // Email Settings
 define('SMTP_HOST', 'smtp.gmail.com');
@@ -29,6 +29,8 @@ define('SESSION_LIFETIME', 86400); // 24 hours
 
 // CORS Settings
 define('ALLOWED_ORIGINS', [
+    'https://minaboules.com',
+    'https://academy.karizmatek.com',
     'http://localhost:5173',
     'http://localhost:3000',
 ]);
