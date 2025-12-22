@@ -1,0 +1,43 @@
+<?php
+require_once '../../config/database.php';
+require_once '../../helpers/Database.php';
+require_once '../../helpers/Auth.php';
+require_once '../../helpers/CertificateManager.php';
+require_once '../../middleware/cors.php';
+require_once '../../middleware/admin.php';
+
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+    exit();
+}
+
+try {
+    $database = new Database();
+    $db = $database->getConnection();
+    $database->conn = $db;
+    $auth = new Auth($database);
+    $certManager = new CertificateManager($database);
+
+    $admin = requireAdmin();
+
+    $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 50;
+
+    $filters = [];
+    if (isset($_GET['is_active'])) {
+        $filters['is_active'] = $_GET['is_active'];
+    }
+    if (isset($_GET['search'])) {
+        $filters['search'] = $_GET['search'];
+    }
+
+    $result = $certManager->getAll($page, $limit, $filters);
+    http_response_code(200);
+    echo json_encode($result);
+
+} catch (Exception $e) {
+    error_log("Get Certificates Error: " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'حدث خطأ في الخادم']);
+}

@@ -228,3 +228,395 @@ CREATE TABLE IF NOT EXISTS quotations (
     INDEX idx_email (email),
     INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Certificates table
+CREATE TABLE IF NOT EXISTS certificates (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    certificate_code VARCHAR(50) NOT NULL UNIQUE,
+    user_id INT(11) UNSIGNED NOT NULL,
+    course_id INT(11) UNSIGNED NOT NULL,
+    student_name VARCHAR(255) NOT NULL,
+    course_title VARCHAR(255) NOT NULL,
+    completion_date DATE NOT NULL,
+    grade VARCHAR(20) NULL,
+    instructor_name VARCHAR(255) NULL,
+    certificate_url VARCHAR(255) NULL COMMENT 'PDF URL if generated',
+    issued_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    INDEX idx_certificate_code (certificate_code),
+    INDEX idx_user_id (user_id),
+    INDEX idx_course_id (course_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Course progress tracking
+CREATE TABLE IF NOT EXISTS course_progress (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT(11) UNSIGNED NOT NULL,
+    course_id INT(11) UNSIGNED NOT NULL,
+    lesson_id INT(11) UNSIGNED NULL,
+    progress_percentage INT(11) DEFAULT 0,
+    last_watched_lesson INT(11) UNSIGNED NULL,
+    watch_time INT(11) DEFAULT 0 COMMENT 'Total watch time in seconds',
+    completed TINYINT(1) DEFAULT 0,
+    completed_at TIMESTAMP NULL,
+    last_accessed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (lesson_id) REFERENCES course_lessons(id) ON DELETE SET NULL,
+    UNIQUE KEY unique_user_course (user_id, course_id),
+    INDEX idx_user_id (user_id),
+    INDEX idx_course_id (course_id),
+    INDEX idx_completed (completed)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Lesson progress tracking
+CREATE TABLE IF NOT EXISTS lesson_progress (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT(11) UNSIGNED NOT NULL,
+    lesson_id INT(11) UNSIGNED NOT NULL,
+    course_id INT(11) UNSIGNED NOT NULL,
+    watched TINYINT(1) DEFAULT 0,
+    watch_duration INT(11) DEFAULT 0 COMMENT 'Watched duration in seconds',
+    completed TINYINT(1) DEFAULT 0,
+    completed_at TIMESTAMP NULL,
+    last_position INT(11) DEFAULT 0 COMMENT 'Last position in seconds',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (lesson_id) REFERENCES course_lessons(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_user_lesson (user_id, lesson_id),
+    INDEX idx_user_id (user_id),
+    INDEX idx_lesson_id (lesson_id),
+    INDEX idx_course_id (course_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Shopping cart
+CREATE TABLE IF NOT EXISTS cart (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT(11) UNSIGNED NOT NULL,
+    course_id INT(11) UNSIGNED NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_user_course (user_id, course_id),
+    INDEX idx_user_id (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Orders/Transactions
+CREATE TABLE IF NOT EXISTS orders (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    order_number VARCHAR(50) NOT NULL UNIQUE,
+    user_id INT(11) UNSIGNED NOT NULL,
+    total_amount DECIMAL(10, 2) NOT NULL,
+    discount_amount DECIMAL(10, 2) DEFAULT 0.00,
+    final_amount DECIMAL(10, 2) NOT NULL,
+    payment_method ENUM('wallet', 'credit_card', 'paypal', 'bank_transfer', 'cash') DEFAULT 'wallet',
+    payment_status ENUM('pending', 'processing', 'completed', 'failed', 'refunded') DEFAULT 'pending',
+    transaction_id VARCHAR(255) NULL COMMENT 'External payment gateway transaction ID',
+    notes TEXT NULL,
+    ip_address VARCHAR(45) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    paid_at TIMESTAMP NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_order_number (order_number),
+    INDEX idx_user_id (user_id),
+    INDEX idx_payment_status (payment_status),
+    INDEX idx_created_at (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Order items
+CREATE TABLE IF NOT EXISTS order_items (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    order_id INT(11) UNSIGNED NOT NULL,
+    course_id INT(11) UNSIGNED NOT NULL,
+    course_title VARCHAR(255) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    INDEX idx_order_id (order_id),
+    INDEX idx_course_id (course_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- User wallet
+CREATE TABLE IF NOT EXISTS wallet (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT(11) UNSIGNED NOT NULL UNIQUE,
+    balance DECIMAL(10, 2) DEFAULT 0.00,
+    total_deposited DECIMAL(10, 2) DEFAULT 0.00,
+    total_spent DECIMAL(10, 2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Wallet transactions
+CREATE TABLE IF NOT EXISTS wallet_transactions (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT(11) UNSIGNED NOT NULL,
+    transaction_type ENUM('deposit', 'withdrawal', 'purchase', 'refund', 'bonus') NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    balance_before DECIMAL(10, 2) NOT NULL,
+    balance_after DECIMAL(10, 2) NOT NULL,
+    description TEXT NULL,
+    reference_type VARCHAR(50) NULL COMMENT 'order, course, etc',
+    reference_id INT(11) UNSIGNED NULL,
+    payment_method VARCHAR(50) NULL,
+    status ENUM('pending', 'completed', 'failed', 'cancelled') DEFAULT 'completed',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id),
+    INDEX idx_transaction_type (transaction_type),
+    INDEX idx_status (status),
+    INDEX idx_created_at (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Site settings and page content
+CREATE TABLE IF NOT EXISTS site_settings (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    setting_key VARCHAR(100) NOT NULL UNIQUE,
+    setting_value LONGTEXT NULL COMMENT 'JSON or text value',
+    category ENUM('home', 'about', 'contact', 'general', 'seo', 'social') DEFAULT 'general',
+    setting_type ENUM('text', 'textarea', 'json', 'image', 'boolean', 'number') DEFAULT 'text',
+    is_public TINYINT(1) DEFAULT 1 COMMENT 'Can be accessed by public API',
+    description TEXT NULL,
+    updated_by INT(11) UNSIGNED NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_setting_key (setting_key),
+    INDEX idx_category (category),
+    INDEX idx_is_public (is_public)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Insert default homepage settings
+INSERT INTO site_settings (setting_key, setting_value, category, setting_type, description) VALUES
+('home_hero', '{
+    "title": "مرحباً بك في Mena Boules 3D Experience",
+    "subtitle": "تعلم التصميم ثلاثي الأبعاد مع أفضل المدربين",
+    "description": "نقدم دورات احترافية في Blender, Unity, Unreal Engine وأكثر",
+    "cta_text": "ابدأ التعلم الآن",
+    "cta_link": "/courses",
+    "background_image": "hero-bg.jpg",
+    "video_url": null
+}', 'home', 'json', 'محتوى Hero Section في الصفحة الرئيسية'),
+
+('home_features', '{
+    "title": "لماذا تختارنا؟",
+    "subtitle": "نقدم أفضل تجربة تعليمية",
+    "features": [
+        {
+            "icon": "fa-graduation-cap",
+            "title": "دورات احترافية",
+            "description": "محتوى تعليمي عالي الجودة"
+        },
+        {
+            "icon": "fa-certificate",
+            "title": "شهادات معتمدة",
+            "description": "احصل على شهادة عند إتمام الدورة"
+        },
+        {
+            "icon": "fa-users",
+            "title": "مجتمع نشط",
+            "description": "تواصل مع المتعلمين والمدربين"
+        },
+        {
+            "icon": "fa-clock",
+            "title": "تعلم في أي وقت",
+            "description": "محتوى متاح 24/7"
+        }
+    ]
+}', 'home', 'json', 'قسم المميزات في الصفحة الرئيسية'),
+
+('home_stats', '{
+    "stats": [
+        {
+            "number": "1000+",
+            "label": "طالب",
+            "icon": "fa-users"
+        },
+        {
+            "number": "50+",
+            "label": "دورة",
+            "icon": "fa-book"
+        },
+        {
+            "number": "100+",
+            "label": "مشروع",
+            "icon": "fa-project-diagram"
+        },
+        {
+            "number": "98%",
+            "label": "نسبة الرضا",
+            "icon": "fa-star"
+        }
+    ]
+}', 'home', 'json', 'قسم الإحصائيات في الصفحة الرئيسية'),
+
+('home_testimonials', '{
+    "title": "ماذا يقول طلابنا",
+    "testimonials": [
+        {
+            "name": "أحمد محمد",
+            "role": "مصمم 3D",
+            "avatar": "testimonial-1.jpg",
+            "rating": 5,
+            "comment": "دورات رائعة ومحتوى احترافي. تعلمت الكثير!"
+        },
+        {
+            "name": "سارة أحمد",
+            "role": "مطورة ألعاب",
+            "avatar": "testimonial-2.jpg",
+            "rating": 5,
+            "comment": "أفضل منصة تعليمية للتصميم ثلاثي الأبعاد"
+        }
+    ]
+}', 'home', 'json', 'آراء الطلاب في الصفحة الرئيسية'),
+
+('home_cta', '{
+    "title": "ابدأ رحلتك التعليمية الآن",
+    "description": "انضم إلى آلاف الطلاب وتعلم مهارات جديدة",
+    "button_text": "تصفح الدورات",
+    "button_link": "/courses",
+    "background_image": "cta-bg.jpg"
+}', 'home', 'json', 'قسم Call to Action في الصفحة الرئيسية'),
+
+('about_hero', '{
+    "title": "من نحن",
+    "subtitle": "رحلتنا في عالم التصميم ثلاثي الأبعاد",
+    "description": "نحن منصة تعليمية رائدة في مجال التصميم والتطوير ثلاثي الأبعاد",
+    "image": "about-hero.jpg"
+}', 'about', 'json', 'Hero في صفحة من نحن'),
+
+('about_story', '{
+    "title": "قصتنا",
+    "content": "بدأنا رحلتنا في عام 2020 بهدف توفير تعليم عالي الجودة في مجال التصميم ثلاثي الأبعاد. اليوم، نفخر بخدمة آلاف الطلاب حول العالم.",
+    "image": "our-story.jpg",
+    "founded_year": "2020",
+    "mission": "مهمتنا هي جعل التعليم في مجال التصميم ثلاثي الأبعاد متاحاً للجميع",
+    "vision": "رؤيتنا هي أن نكون المنصة الرائدة عالمياً في تعليم التصميم ثلاثي الأبعاد"
+}', 'about', 'json', 'قصتنا في صفحة من نحن'),
+
+('about_values', '{
+    "title": "قيمنا",
+    "values": [
+        {
+            "icon": "fa-heart",
+            "title": "الشغف",
+            "description": "نحن شغوفون بالتصميم والتعليم"
+        },
+        {
+            "icon": "fa-users",
+            "title": "المجتمع",
+            "description": "نبني مجتمعاً قوياً من المبدعين"
+        },
+        {
+            "icon": "fa-lightbulb",
+            "title": "الابتكار",
+            "description": "نبتكر طرق تعليم جديدة ومميزة"
+        },
+        {
+            "icon": "fa-star",
+            "title": "الجودة",
+            "description": "نلتزم بأعلى معايير الجودة"
+        }
+    ]
+}', 'about', 'json', 'القيم في صفحة من نحن'),
+
+('about_team', '{
+    "title": "فريقنا",
+    "description": "تعرف على الفريق الذي يعمل لتقديم أفضل تجربة تعليمية",
+    "members": [
+        {
+            "name": "مينا بولس",
+            "role": "المؤسس والمدير التنفيذي",
+            "avatar": "team-1.jpg",
+            "bio": "خبير في التصميم ثلاثي الأبعاد مع أكثر من 10 سنوات خبرة",
+            "social": {
+                "linkedin": "#",
+                "twitter": "#",
+                "instagram": "#"
+            }
+        }
+    ]
+}', 'about', 'json', 'الفريق في صفحة من نحن'),
+
+('site_info', '{
+    "site_name": "Mena Boules 3D Experience",
+    "tagline": "تعلم التصميم ثلاثي الأبعاد",
+    "logo": "logo.png",
+    "favicon": "favicon.ico",
+    "contact_email": "info@menaboules.com",
+    "contact_phone": "+20 123 456 7890",
+    "address": "القاهرة، مصر",
+    "copyright": "© 2024 Mena Boules 3D Experience. All rights reserved."
+}', 'general', 'json', 'معلومات الموقع العامة'),
+
+('social_links', '{
+    "facebook": "https://facebook.com/menaboules",
+    "twitter": "https://twitter.com/menaboules",
+    "instagram": "https://instagram.com/menaboules",
+    "youtube": "https://youtube.com/menaboules",
+    "linkedin": "https://linkedin.com/company/menaboules"
+}', 'social', 'json', 'روابط مواقع التواصل الاجتماعي')
+
+ON DUPLICATE KEY UPDATE setting_key = setting_key;
+
+-- Companies table
+CREATE TABLE IF NOT EXISTS companies (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    company_name VARCHAR(255) NOT NULL,
+    position VARCHAR(255) NOT NULL,
+    company_handle VARCHAR(100) NULL COMMENT 'e.g. @Wida, @Sunweb',
+    start_date VARCHAR(50) NOT NULL COMMENT 'e.g. Jan 2025',
+    end_date VARCHAR(50) NULL COMMENT 'e.g. Present, Mar 2025',
+    is_current TINYINT(1) DEFAULT 0,
+    logo_url VARCHAR(255) NULL,
+    logo_bg_color VARCHAR(20) NULL DEFAULT '#667eea' COMMENT 'Background color for logo',
+    display_order INT(11) DEFAULT 0,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_display_order (display_order),
+    INDEX idx_is_active (is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Certificates table
+CREATE TABLE IF NOT EXISTS certificates (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    certificate_name VARCHAR(255) NOT NULL,
+    issuer VARCHAR(255) NOT NULL COMMENT 'e.g. @Edraak, @Kingston Business Academy',
+    year VARCHAR(50) NOT NULL COMMENT 'e.g. 2019, 2021 - Present',
+    description TEXT NULL,
+    logo_url VARCHAR(255) NULL,
+    logo_bg_color VARCHAR(20) NULL DEFAULT '#667eea' COMMENT 'Background color for logo',
+    certificate_url VARCHAR(500) NULL COMMENT 'Link to certificate verification',
+    display_order INT(11) DEFAULT 0,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_display_order (display_order),
+    INDEX idx_is_active (is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Insert sample companies data
+INSERT INTO companies (company_name, position, company_handle, start_date, end_date, is_current, logo_bg_color, display_order, is_active) VALUES
+('Wida', 'Web Developer', '@Wida', 'Jan 2025', 'Present', 1, '#4a5568', 1, 1),
+('Sunweb Solution', 'Team Leader', '@Sunweb Solution', 'Apr 2023', 'Present', 1, '#ef4444', 2, 1),
+('Pessarde', 'Senior Web Developer', '@Pessarde', 'Jan 2024', 'Mar 2025', 0, '#10b981', 3, 1),
+('SUNGROUP', 'Team Leader', '@SUNGROUP', 'May 2020', 'Present', 1, '#ef4444', 4, 1),
+('Winmarket Agency', 'Team Leader', '@Winmarket Agency', 'May 2020', 'Present', 1, '#e5e7eb', 5, 1),
+('Entreprenelle', 'Web Developer', '@Entreprenelle', 'May 2020', 'Dec 2025', 0, '#f3f4f6', 6, 1);
+
+-- Insert sample certificates data
+INSERT INTO certificates (certificate_name, issuer, year, logo_bg_color, display_order, is_active) VALUES
+('ICDL Specto & Edraak', '@Edraak', '2019', '#ec4899', 1, 1),
+('Certified Technology Trainer', '@Kingston Business Academy', '2021', '#a855f7', 2, 1),
+('Certified Technology Trainer', '@Ministry of Education', '2019 - 2025', '#86efac', 3, 1),
+('Commerce, Business, Management', '@Suez Canal University', '2021 - Present', '#fbbf24', 4, 1),
+('Microsoft Technology Associate', '@Microsoft', '2022', '#64748b', 5, 1);
