@@ -620,3 +620,127 @@ INSERT INTO certificates (certificate_name, issuer, year, logo_bg_color, display
 ('Certified Technology Trainer', '@Ministry of Education', '2019 - 2025', '#86efac', 3, 1),
 ('Commerce, Business, Management', '@Suez Canal University', '2021 - Present', '#fbbf24', 4, 1),
 ('Microsoft Technology Associate', '@Microsoft', '2022', '#64748b', 5, 1);
+
+-- Blog Categories table
+CREATE TABLE IF NOT EXISTS blog_categories (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL UNIQUE,
+    description TEXT NULL,
+    color VARCHAR(20) NULL DEFAULT '#667eea',
+    display_order INT(11) DEFAULT 0,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_slug (slug),
+    INDEX idx_is_active (is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Blog Posts table with Advanced SEO
+CREATE TABLE IF NOT EXISTS blog_posts (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(500) NOT NULL,
+    slug VARCHAR(500) NOT NULL UNIQUE,
+    excerpt TEXT NULL,
+    content LONGTEXT NOT NULL,
+    featured_image VARCHAR(500) NULL,
+    author_id INT(11) UNSIGNED NOT NULL,
+    category_id INT(11) UNSIGNED NULL,
+    tags TEXT NULL COMMENT 'Comma-separated tags',
+    status ENUM('draft', 'published', 'scheduled') DEFAULT 'draft',
+    published_at TIMESTAMP NULL,
+    views INT(11) DEFAULT 0,
+    reading_time INT(11) NULL COMMENT 'Reading time in minutes',
+    
+    -- Advanced SEO Fields
+    meta_title VARCHAR(255) NULL,
+    meta_description TEXT NULL,
+    meta_keywords TEXT NULL,
+    canonical_url VARCHAR(500) NULL,
+    robots VARCHAR(100) NULL DEFAULT 'index, follow',
+    
+    -- Open Graph (Facebook, LinkedIn)
+    og_title VARCHAR(255) NULL,
+    og_description TEXT NULL,
+    og_image VARCHAR(500) NULL,
+    og_type VARCHAR(50) NULL DEFAULT 'article',
+    
+    -- Twitter Card
+    twitter_card VARCHAR(50) NULL DEFAULT 'summary_large_image',
+    twitter_title VARCHAR(255) NULL,
+    twitter_description TEXT NULL,
+    twitter_image VARCHAR(500) NULL,
+    
+    -- Schema.org JSON-LD
+    schema_markup LONGTEXT NULL COMMENT 'JSON-LD structured data',
+    
+    is_featured TINYINT(1) DEFAULT 0,
+    allow_comments TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES blog_categories(id) ON DELETE SET NULL,
+    INDEX idx_slug (slug),
+    INDEX idx_status (status),
+    INDEX idx_published_at (published_at),
+    INDEX idx_category_id (category_id),
+    INDEX idx_is_featured (is_featured),
+    INDEX idx_views (views)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Blog Comments table
+CREATE TABLE IF NOT EXISTS blog_comments (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    post_id INT(11) UNSIGNED NOT NULL,
+    user_id INT(11) UNSIGNED NULL,
+    author_name VARCHAR(255) NULL,
+    author_email VARCHAR(255) NULL,
+    comment TEXT NOT NULL,
+    status ENUM('pending', 'approved', 'spam') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (post_id) REFERENCES blog_posts(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_post_id (post_id),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Insert sample blog categories
+INSERT INTO blog_categories (name, slug, description, color, display_order) VALUES
+('3D Modeling', '3d-modeling', 'دروس ومقالات عن التصميم ثلاثي الأبعاد', '#667eea', 1),
+('Web Development', 'web-development', 'برمجة وتطوير المواقع', '#10b981', 2),
+('Game Development', 'game-development', 'تطوير الألعاب والمحركات', '#f59e0b', 3),
+('Tutorials', 'tutorials', 'دروس تعليمية خطوة بخطوة', '#ec4899', 4),
+('News', 'news', 'آخر الأخبار والتحديثات', '#3b82f6', 5);
+
+-- Insert sample blog post
+INSERT INTO blog_posts (
+    title, slug, excerpt, content, author_id, category_id, tags, status, published_at,
+    meta_title, meta_description, meta_keywords,
+    og_title, og_description, og_type,
+    twitter_card, twitter_title, twitter_description,
+    reading_time, is_featured
+) VALUES (
+    'مرحباً بك في مدونة Mena Boules 3D Experience',
+    'welcome-to-blog',
+    'مقدمة عن المدونة والمحتوى الذي ستجده هنا',
+    '<h2>مرحباً بك!</h2><p>هذه أول مقالة في المدونة. ستجد هنا دروس ومقالات عن التصميم ثلاثي الأبعاد، تطوير الويب، وتطوير الألعاب.</p>',
+    1,
+    1,
+    '3D,Blender,Tutorial',
+    'published',
+    NOW(),
+    'مرحباً بك في مدونة Mena Boules | 3D Experience',
+    'تعلم التصميم ثلاثي الأبعاد وتطوير الويب مع دروس احترافية',
+    '3d modeling, blender, web development, tutorials',
+    'مرحباً بك في مدونة Mena Boules',
+    'تعلم التصميم ثلاثي الأبعاد وتطوير الويب',
+    'article',
+    'summary_large_image',
+    'مرحباً بك في مدونة Mena Boules',
+    'تعلم التصميم ثلاثي الأبعاد وتطوير الويب مع دروس احترافية',
+    5,
+    1
+);
