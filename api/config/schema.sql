@@ -744,3 +744,132 @@ INSERT INTO blog_posts (
     5,
     1
 );
+
+-- Wishlist table
+CREATE TABLE IF NOT EXISTS wishlist (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT(11) UNSIGNED NOT NULL,
+    course_id INT(11) UNSIGNED NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_wishlist (user_id, course_id),
+    INDEX idx_user_id (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Course Access Codes (للكورسات المقفولة برقم سري)
+CREATE TABLE IF NOT EXISTS course_access_codes (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    course_id INT(11) UNSIGNED NOT NULL,
+    access_code VARCHAR(50) NOT NULL UNIQUE,
+    max_uses INT(11) NULL COMMENT 'NULL = unlimited',
+    current_uses INT(11) DEFAULT 0,
+    expires_at TIMESTAMP NULL,
+    is_active TINYINT(1) DEFAULT 1,
+    created_by INT(11) UNSIGNED NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_course_id (course_id),
+    INDEX idx_access_code (access_code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Course Curriculum Sections
+CREATE TABLE IF NOT EXISTS course_sections (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    course_id INT(11) UNSIGNED NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NULL,
+    display_order INT(11) DEFAULT 0,
+    is_published TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    INDEX idx_course_id (course_id),
+    INDEX idx_display_order (display_order)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Course Lessons (Video Lessons)
+CREATE TABLE IF NOT EXISTS course_lessons (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    section_id INT(11) UNSIGNED NOT NULL,
+    course_id INT(11) UNSIGNED NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NULL,
+    video_url VARCHAR(500) NULL,
+    video_type ENUM('youtube', 'vimeo', 'direct', 'embed') DEFAULT 'youtube',
+    video_duration INT(11) NULL COMMENT 'Duration in seconds',
+    is_preview TINYINT(1) DEFAULT 0 COMMENT 'Free preview lesson',
+    display_order INT(11) DEFAULT 0,
+    is_published TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (section_id) REFERENCES course_sections(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    INDEX idx_section_id (section_id),
+    INDEX idx_course_id (course_id),
+    INDEX idx_display_order (display_order)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Course Resources (Downloadable files)
+CREATE TABLE IF NOT EXISTS course_resources (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    lesson_id INT(11) UNSIGNED NULL,
+    course_id INT(11) UNSIGNED NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NULL,
+    file_url VARCHAR(500) NOT NULL,
+    file_type VARCHAR(50) NULL COMMENT 'pdf, zip, doc, etc',
+    file_size INT(11) NULL COMMENT 'Size in bytes',
+    download_count INT(11) DEFAULT 0,
+    display_order INT(11) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (lesson_id) REFERENCES course_lessons(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    INDEX idx_lesson_id (lesson_id),
+    INDEX idx_course_id (course_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Course Q&A
+CREATE TABLE IF NOT EXISTS course_qa (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    course_id INT(11) UNSIGNED NOT NULL,
+    lesson_id INT(11) UNSIGNED NULL,
+    user_id INT(11) UNSIGNED NOT NULL,
+    parent_id INT(11) UNSIGNED NULL COMMENT 'For replies',
+    question TEXT NOT NULL,
+    answer TEXT NULL,
+    answered_by INT(11) UNSIGNED NULL,
+    is_pinned TINYINT(1) DEFAULT 0,
+    upvotes INT(11) DEFAULT 0,
+    status ENUM('pending', 'answered', 'closed') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (lesson_id) REFERENCES course_lessons(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (parent_id) REFERENCES course_qa(id) ON DELETE CASCADE,
+    FOREIGN KEY (answered_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_course_id (course_id),
+    INDEX idx_lesson_id (lesson_id),
+    INDEX idx_user_id (user_id),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Insert sample data
+INSERT INTO course_sections (course_id, title, description, display_order) VALUES
+(1, 'Introduction', 'Getting started with the course', 1),
+(1, 'Core Concepts', 'Understanding the fundamentals', 2),
+(1, 'Advanced Topics', 'Deep dive into advanced features', 3);
+
+INSERT INTO course_lessons (section_id, course_id, title, description, video_url, video_type, video_duration, is_preview, display_order) VALUES
+(1, 1, 'Welcome to the Course', 'Introduction and course overview', 'https://youtube.com/watch?v=example1', 'youtube', 300, 1, 1),
+(1, 1, 'Course Requirements', 'What you need to get started', 'https://youtube.com/watch?v=example2', 'youtube', 420, 1, 2),
+(2, 1, 'Lesson 1: Basics', 'Learn the basics', 'https://youtube.com/watch?v=example3', 'youtube', 1800, 0, 1);
+
+INSERT INTO course_resources (lesson_id, course_id, title, file_url, file_type) VALUES
+(1, 1, 'Course Syllabus', 'https://example.com/syllabus.pdf', 'pdf'),
+(2, 1, 'Setup Guide', 'https://example.com/setup.pdf', 'pdf'),
+(3, 1, 'Project Files', 'https://example.com/files.zip', 'zip');
