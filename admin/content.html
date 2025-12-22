@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المحتوى - لوحة التحكم</title>
+    <link rel="stylesheet" href="assets/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="top-navbar">
+        <div class="nav-container">
+            <div class="nav-right">
+                <div class="logo">
+                    <i class="fas fa-cube"></i>
+                    <span>Mena Boules 3D</span>
+                </div>
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <div class="nav-left">
+                <div class="admin-profile">
+                    <img src="assets/img/default-avatar.png" alt="Admin" class="admin-avatar" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23667eea%22%3E%3Cpath d=%22M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z%22/%3E%3C/svg%3E'">
+                    <span class="admin-name" id="adminName">Admin</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="dropdown-menu" id="profileDropdown">
+                    <a href="#" onclick="logout(); return false;">
+                        <i class="fas fa-sign-out-alt"></i>
+                        تسجيل الخروج
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <aside class="sidebar" id="sidebar">
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>الرئيسية</span>
+                </a>
+                <a href="users.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>المستخدمين</span>
+                </a>
+                <a href="courses.html" class="nav-item">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>الدورات</span>
+                </a>
+                <a href="projects.html" class="nav-item">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>المشاريع</span>
+                </a>
+                <a href="services.html" class="nav-item">
+                    <i class="fas fa-cogs"></i>
+                    <span>الخدمات</span>
+                </a>
+                <a href="quotations.html" class="nav-item">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>عروض الأسعار</span>
+                </a>
+                <a href="content.html" class="nav-item active">
+                    <i class="fas fa-edit"></i>
+                    <span>إدارة المحتوى</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="#" class="nav-item" onclick="logout(); return false;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>تسجيل الخروج</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>إدارة المحتوى</h1>
+                <p>تحكم في محتوى الصفحة الرئيسية وصفحة من نحن</p>
+            </div>
+
+            <div class="content-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>محتوى الصفحة الرئيسية</h2>
+                        <button class="btn btn-primary" onclick="loadHomeContent()">
+                            <i class="fas fa-sync"></i>
+                            تحديث
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="homeContentContainer">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>جاري التحميل...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>محتوى صفحة من نحن</h2>
+                        <button class="btn btn-primary" onclick="loadAboutContent()">
+                            <i class="fas fa-sync"></i>
+                            تحديث
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="aboutContentContainer">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>جاري التحميل...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Setting Modal -->
+    <div id="editSettingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>تعديل الإعداد</h3>
+                <button class="modal-close" onclick="closeModal('editSettingModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editSettingForm">
+                    <input type="hidden" id="settingKey">
+                    <div class="form-group">
+                        <label class="form-label">المفتاح</label>
+                        <input type="text" id="settingKeyDisplay" class="form-control" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">القيمة (JSON)</label>
+                        <textarea id="settingValue" class="form-control" rows="15" style="font-family: monospace;"></textarea>
+                        <small>يجب أن تكون البيانات بصيغة JSON صحيحة</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="saveSetting()">
+                    <i class="fas fa-save"></i>
+                    حفظ التغييرات
+                </button>
+                <button class="btn btn-secondary" onclick="closeModal('editSettingModal')">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/admin.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = checkAuth();
+            if (user) {
+                document.getElementById('adminName').textContent = user.full_name || user.email;
+                loadHomeContent();
+                loadAboutContent();
+            }
+        });
+
+        document.querySelector('.admin-profile').addEventListener('click', () => {
+            document.getElementById('profileDropdown').classList.toggle('show');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.admin-profile')) {
+                document.getElementById('profileDropdown').classList.remove('show');
+            }
+        });
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+        }
+
+        // Load home content
+        async function loadHomeContent() {
+            const container = document.getElementById('homeContentContainer');
+            container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>جاري التحميل...</p></div>';
+
+            const result = await apiRequest('/admin/content/home.php');
+
+            if (result.success && result.settings) {
+                container.innerHTML = result.settings.map(setting => {
+                    const value = typeof setting.setting_value === 'string' ? setting.setting_value : JSON.stringify(setting.setting_value, null, 2);
+                    const displayValue = value.length > 200 ? value.substring(0, 200) + '...' : value;
+
+                    return '<div style="padding: 16px; margin-bottom: 12px; background: #f8f9fa; border-radius: 8px; border-right: 4px solid var(--primary-color);">' +
+                        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
+                        '<strong style="font-size: 16px;">' + setting.setting_key + '</strong>' +
+                        '<button class="btn btn-sm btn-secondary" onclick="editSetting(\'' + setting.setting_key + '\')">' +
+                        '<i class="fas fa-edit"></i> تعديل' +
+                        '</button>' +
+                        '</div>' +
+                        '<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-size: 13px; color: #555;">' + escapeHtml(displayValue) + '</pre>' +
+                        '</div>';
+                }).join('');
+            } else {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>فشل تحميل المحتوى</p></div>';
+            }
+        }
+
+        // Load about content
+        async function loadAboutContent() {
+            const container = document.getElementById('aboutContentContainer');
+            container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>جاري التحميل...</p></div>';
+
+            const result = await apiRequest('/admin/content/about.php');
+
+            if (result.success && result.settings) {
+                container.innerHTML = result.settings.map(setting => {
+                    const value = typeof setting.setting_value === 'string' ? setting.setting_value : JSON.stringify(setting.setting_value, null, 2);
+                    const displayValue = value.length > 200 ? value.substring(0, 200) + '...' : value;
+
+                    return '<div style="padding: 16px; margin-bottom: 12px; background: #f8f9fa; border-radius: 8px; border-right: 4px solid var(--primary-color);">' +
+                        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
+                        '<strong style="font-size: 16px;">' + setting.setting_key + '</strong>' +
+                        '<button class="btn btn-sm btn-secondary" onclick="editSetting(\'' + setting.setting_key + '\')">' +
+                        '<i class="fas fa-edit"></i> تعديل' +
+                        '</button>' +
+                        '</div>' +
+                        '<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-size: 13px; color: #555;">' + escapeHtml(displayValue) + '</pre>' +
+                        '</div>';
+                }).join('');
+            } else {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>فشل تحميل المحتوى</p></div>';
+            }
+        }
+
+        // Edit setting
+        async function editSetting(key) {
+            const result = await apiRequest('/admin/content/get.php?key=' + key);
+
+            if (result.success && result.setting) {
+                document.getElementById('settingKey').value = key;
+                document.getElementById('settingKeyDisplay').value = key;
+
+                const value = typeof result.setting.setting_value === 'string' 
+                    ? result.setting.setting_value 
+                    : JSON.stringify(result.setting.setting_value, null, 2);
+
+                document.getElementById('settingValue').value = value;
+                openModal('editSettingModal');
+            } else {
+                showToast('فشل تحميل الإعداد', 'error');
+            }
+        }
+
+        // Save setting
+        async function saveSetting() {
+            const key = document.getElementById('settingKey').value;
+            const valueStr = document.getElementById('settingValue').value.trim();
+
+            // Try to parse as JSON
+            let value;
+            try {
+                value = JSON.parse(valueStr);
+            } catch (e) {
+                // If not valid JSON, use as string
+                value = valueStr;
+            }
+
+            const result = await apiRequest('/admin/content/update.php', {
+                method: 'POST',
+                body: JSON.stringify({
+                    setting_key: key,
+                    setting_value: value
+                })
+            });
+
+            if (result.success) {
+                showToast('تم تحديث الإعداد بنجاح', 'success');
+                closeModal('editSettingModal');
+                
+                // Reload appropriate section
+                if (key.startsWith('home_')) {
+                    loadHomeContent();
+                } else if (key.startsWith('about_')) {
+                    loadAboutContent();
+                }
+            } else {
+                showToast(result.message || 'فشل تحديث الإعداد', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
