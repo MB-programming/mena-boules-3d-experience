@@ -143,7 +143,7 @@ class Auth {
      * Verify session token
      */
     public function verifyToken($token) {
-        $sql = "SELECT s.*, u.id, u.name, u.email, u.phone, u.avatar, u.status
+        $sql = "SELECT s.*, u.id, u.name, u.email, u.phone, u.avatar, u.role, u.status
                 FROM sessions s
                 INNER JOIN users u ON s.user_id = u.id
                 WHERE s.token = ? AND s.expires_at > NOW() AND u.status = 'active'";
@@ -160,6 +160,7 @@ class Auth {
             'email' => $session['email'],
             'phone' => $session['phone'],
             'avatar' => $session['avatar'],
+            'role' => $session['role'],
             'status' => $session['status']
         ];
     }
@@ -168,7 +169,7 @@ class Auth {
      * Get user by ID
      */
     public function getUserById($userId) {
-        $sql = "SELECT id, name, email, phone, avatar, email_verified, status, created_at
+        $sql = "SELECT id, name, email, phone, avatar, role, email_verified, status, created_at
                 FROM users WHERE id = ?";
 
         return $this->db->querySingle($sql, [$userId]);

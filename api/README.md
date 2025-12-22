@@ -1,6 +1,6 @@
 # Mena Boules 3D Experience - Backend API
 
-نظام Backend مبني بـ Native PHP وMySQL لتطبيق Mena Boules 3D Experience.
+نظام Backend مبني بـ Native PHP وMySQL لتطبيق Mena Boules 3D Experience مع لوحة تحكم Admin كاملة.
 
 ## المتطلبات
 
@@ -49,6 +49,18 @@ define('SMTP_PASS', 'your-app-password');
 sudo a2enmod rewrite
 sudo service apache2 restart
 ```
+
+## حساب Admin الافتراضي
+
+بعد تشغيل schema.sql، يتم إنشاء حساب admin تلقائياً:
+
+- **Email:** admin@menaboules.com
+- **Password:** password
+- **Role:** super_admin
+
+⚠️ **مهم:** غيّر كلمة المرور فوراً بعد أول تسجيل دخول!
+
+---
 
 ## Endpoints
 
@@ -282,6 +294,53 @@ curl -X POST http://localhost/mena-boules-3d-experience/api/auth/login \
 ## الدعم
 
 للمشاكل والاستفسارات، يرجى فتح issue في المستودع.
+
+---
+
+## Admin Dashboard
+
+لوحة تحكم كاملة للإدارة مع CRUD للمستخدمين والكورسات.
+
+### Endpoints:
+
+#### إحصائيات Dashboard
+```
+GET /api/admin/stats
+```
+
+#### إدارة المستخدمين
+```
+GET    /api/admin/users           # قائمة المستخدمين
+GET    /api/admin/users/get       # الحصول على مستخدم
+PUT    /api/admin/users/update    # تحديث مستخدم
+DELETE /api/admin/users/delete    # حذف مستخدم
+```
+
+#### إدارة الكورسات
+```
+GET    /api/admin/courses         # قائمة الكورسات
+POST   /api/admin/courses/create  # إنشاء كورس
+GET    /api/admin/courses/get     # الحصول على كورس
+PUT    /api/admin/courses/update  # تحديث كورس
+DELETE /api/admin/courses/delete  # حذف كورس
+```
+
+للمزيد من التفاصيل، راجع [Admin API Documentation](admin/README.md)
+
+---
+
+## هيكل قاعدة البيانات
+
+### الجداول:
+- **users** - المستخدمين (مع role: user, admin, super_admin)
+- **sessions** - جلسات المستخدمين
+- **password_resets** - طلبات إعادة تعيين كلمة المرور
+- **email_verifications** - تحقق البريد الإلكتروني
+- **courses** - الكورسات
+- **course_enrollments** - تسجيل المستخدمين في الكورسات
+- **course_lessons** - دروس الكورسات (اختياري)
+
+---
 
 ## License
 
