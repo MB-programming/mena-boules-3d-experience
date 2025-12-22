@@ -566,3 +566,57 @@ INSERT INTO site_settings (setting_key, setting_value, category, setting_type, d
 }', 'social', 'json', 'روابط مواقع التواصل الاجتماعي')
 
 ON DUPLICATE KEY UPDATE setting_key = setting_key;
+
+-- Companies table
+CREATE TABLE IF NOT EXISTS companies (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    company_name VARCHAR(255) NOT NULL,
+    position VARCHAR(255) NOT NULL,
+    company_handle VARCHAR(100) NULL COMMENT 'e.g. @Wida, @Sunweb',
+    start_date VARCHAR(50) NOT NULL COMMENT 'e.g. Jan 2025',
+    end_date VARCHAR(50) NULL COMMENT 'e.g. Present, Mar 2025',
+    is_current TINYINT(1) DEFAULT 0,
+    logo_url VARCHAR(255) NULL,
+    logo_bg_color VARCHAR(20) NULL DEFAULT '#667eea' COMMENT 'Background color for logo',
+    display_order INT(11) DEFAULT 0,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_display_order (display_order),
+    INDEX idx_is_active (is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Certificates table
+CREATE TABLE IF NOT EXISTS certificates (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    certificate_name VARCHAR(255) NOT NULL,
+    issuer VARCHAR(255) NOT NULL COMMENT 'e.g. @Edraak, @Kingston Business Academy',
+    year VARCHAR(50) NOT NULL COMMENT 'e.g. 2019, 2021 - Present',
+    description TEXT NULL,
+    logo_url VARCHAR(255) NULL,
+    logo_bg_color VARCHAR(20) NULL DEFAULT '#667eea' COMMENT 'Background color for logo',
+    certificate_url VARCHAR(500) NULL COMMENT 'Link to certificate verification',
+    display_order INT(11) DEFAULT 0,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_display_order (display_order),
+    INDEX idx_is_active (is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Insert sample companies data
+INSERT INTO companies (company_name, position, company_handle, start_date, end_date, is_current, logo_bg_color, display_order, is_active) VALUES
+('Wida', 'Web Developer', '@Wida', 'Jan 2025', 'Present', 1, '#4a5568', 1, 1),
+('Sunweb Solution', 'Team Leader', '@Sunweb Solution', 'Apr 2023', 'Present', 1, '#ef4444', 2, 1),
+('Pessarde', 'Senior Web Developer', '@Pessarde', 'Jan 2024', 'Mar 2025', 0, '#10b981', 3, 1),
+('SUNGROUP', 'Team Leader', '@SUNGROUP', 'May 2020', 'Present', 1, '#ef4444', 4, 1),
+('Winmarket Agency', 'Team Leader', '@Winmarket Agency', 'May 2020', 'Present', 1, '#e5e7eb', 5, 1),
+('Entreprenelle', 'Web Developer', '@Entreprenelle', 'May 2020', 'Dec 2025', 0, '#f3f4f6', 6, 1);
+
+-- Insert sample certificates data
+INSERT INTO certificates (certificate_name, issuer, year, logo_bg_color, display_order, is_active) VALUES
+('ICDL Specto & Edraak', '@Edraak', '2019', '#ec4899', 1, 1),
+('Certified Technology Trainer', '@Kingston Business Academy', '2021', '#a855f7', 2, 1),
+('Certified Technology Trainer', '@Ministry of Education', '2019 - 2025', '#86efac', 3, 1),
+('Commerce, Business, Management', '@Suez Canal University', '2021 - Present', '#fbbf24', 4, 1),
+('Microsoft Technology Associate', '@Microsoft', '2022', '#64748b', 5, 1);
