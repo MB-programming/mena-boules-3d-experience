@@ -1,114 +1,17 @@
 import { motion, useAnimationControls } from 'framer-motion';
 import { useEffect, useState } from 'react';
-
-const companies = [
-  { 
-    name: 'Wida', 
-    role: 'Web Developer',
-    period: 'Jan 2025 - Present',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/widaksa_logo.jpeg' 
-  },
-  { 
-    name: 'Sunweb Solution', 
-    role: 'Team Leader',
-    period: 'Apr 2023 - Present',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/538933942_17847275187550557_1849076569739551831_n.jpg' 
-  },
-  { 
-    name: 'Pessarde', 
-    role: 'Senior Web Developer',
-    period: 'Jan 2024 - Mar 2025',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/pissarde_logo.jpeg' 
-  },
-  { 
-    name: 'SUNGROUP', 
-    role: 'Team Leader',
-    period: 'May 2020 - Present',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/sunmed_eg_logo.jpeg' 
-  },
-  { 
-    name: 'Winmarket Agency', 
-    role: 'Team Leader',
-    period: 'May 2020 - Present',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/win_market_agency_logo.jpeg' 
-  },
-  { 
-    name: 'Entreprenelle', 
-    role: 'Web Developer',
-    period: 'May 2020 - Dec 2025',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/1631335871500-1.jpeg' 
-  },
-  { 
-    name: 'SOFM', 
-    role: 'Web Developer',
-    period: 'May 2020 - Dec 2022',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/1653832939195.jpeg' 
-  },
-  { 
-    name: 'Makyn', 
-    role: 'Web Developer & Designer',
-    period: 'Jan 2022 - Oct 2023',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/1726023987459.jpeg' 
-  },
-  { 
-    name: 'Silvertech', 
-    role: 'Team Leader',
-    period: 'Feb 2019',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/silver_tech_app_logo.jpeg' 
-  },
-  { 
-    name: 'IT Sharks', 
-    role: 'Instructor',
-    period: 'Feb 2019',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/it_sharks_logo.jpeg' 
-  },
-  { 
-    name: 'Maaref', 
-    role: 'Instructor',
-    period: 'Feb 2019',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/m3aarf_logo.jpeg' 
-  },
-  { 
-    name: 'Netlab Academy', 
-    role: 'CEO - Founder',
-    period: 'Jan 2018',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/1697760756927.jpeg' 
-  },
-  { 
-    name: 'Kingston Business', 
-    role: 'Web Developer & Instructor',
-    period: 'Jan 2018',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/1630635170868.jpeg' 
-  },
-  { 
-    name: 'Undercontrol', 
-    role: 'Web Developer',
-    period: 'Jan 2019',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/under_controleg_logo.jpeg' 
-  },
-  { 
-    name: 'TeraCourses', 
-    role: 'Instructor',
-    period: 'Jan 2024',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/teracourses_logo.jpeg' 
-  },
-  { 
-    name: 'Udemy', 
-    role: 'Instructor',
-    period: 'Jan 2025',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/unnamed-1.png' 
-  },
-];
-
-// Duplicate for seamless loop
-const duplicatedCompanies = [...companies, ...companies];
+import { useCompanies } from '@/hooks/useCompanies';
 
 const ExperienceSlider = () => {
   const [isPaused, setIsPaused] = useState(false);
   const controls = useAnimationControls();
+  const { data: companies = [], isLoading } = useCompanies();
+
+  // Duplicate for seamless loop
+  const duplicatedCompanies = [...companies, ...companies];
 
   useEffect(() => {
-    if (!isPaused) {
+    if (!isPaused && companies.length > 0) {
       controls.start({
         y: [0, -76 * companies.length],
         transition: {
@@ -123,7 +26,25 @@ const ExperienceSlider = () => {
     } else {
       controls.stop();
     }
-  }, [isPaused, controls]);
+  }, [isPaused, controls, companies.length]);
+
+  if (isLoading) {
+    return (
+      <div className="relative h-[500px] overflow-hidden">
+        <div className="space-y-3">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="glass-card p-3 flex items-center gap-3 animate-pulse">
+              <div className="w-12 h-12 rounded-xl bg-muted" />
+              <div className="flex-1">
+                <div className="w-32 h-4 bg-muted rounded mb-2" />
+                <div className="w-24 h-3 bg-muted rounded" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div 

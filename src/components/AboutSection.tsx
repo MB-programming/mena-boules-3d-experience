@@ -6,17 +6,22 @@ import { AnimatedWave, AnimatedPeace, GlowIcon } from './AnimatedIcon';
 import ExperienceSlider from './ExperienceSlider';
 import CertificatesSlider from './CertificatesSlider';
 import menaProfile from '@/assets/mena-profile.png';
+import { useAboutContent } from '@/hooks/useAboutContent';
 
 const AboutSection = () => {
   const { t } = useLanguage();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const { data: aboutContent, isLoading } = useAboutContent();
 
   const stats = [
-    { value: '5+', label: t('about.experience') },
-    { value: '100+', label: t('about.projects') },
-    { value: '50+', label: t('about.clients') },
+    { value: aboutContent?.yearsExperience || '5+', label: t('about.experience') },
+    { value: aboutContent?.projectsCount || '100+', label: t('about.projects') },
+    { value: aboutContent?.clientsCount || '50+', label: t('about.clients') },
   ];
+
+  const cvUrl = aboutContent?.cvUrl || 'https://minaboules.com/wp-content/uploads/2025/10/Mena-Kelta-cv.pdf';
+  const whatsappNumber = aboutContent?.whatsappNumber || '201222112819';
 
   return (
     <section id="about" className="py-32 px-6" ref={ref}>
@@ -42,12 +47,16 @@ const AboutSection = () => {
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl" />
               
               <div className="relative z-10">
-                <motion.img
-                  src={menaProfile}
-                  alt="Mena Boules"
-                  className="w-20 h-20 sm:w-28 sm:h-28 mx-auto mb-4 rounded-full border-2 border-primary/50 object-cover"
-                  whileHover={{ scale: 1.05 }}
-                />
+                {isLoading ? (
+                  <div className="w-20 h-20 sm:w-28 sm:h-28 mx-auto mb-4 rounded-full bg-muted animate-pulse" />
+                ) : (
+                  <motion.img
+                    src={aboutContent?.image || menaProfile}
+                    alt="Mena Boules"
+                    className="w-20 h-20 sm:w-28 sm:h-28 mx-auto mb-4 rounded-full border-2 border-primary/50 object-cover"
+                    whileHover={{ scale: 1.05 }}
+                  />
+                )}
                 
                 <div className="text-center mb-3 sm:mb-4">
                   <div className="flex items-center justify-center gap-2 text-base sm:text-lg mb-1">
@@ -61,7 +70,7 @@ const AboutSection = () => {
                 </div>
 
                 <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4">
-                  {t('about.description')}
+                  {aboutContent?.description || t('about.description')}
                 </p>
 
                 <div className="grid grid-cols-3 gap-2 mb-3 sm:mb-4">
@@ -85,7 +94,7 @@ const AboutSection = () => {
 
                 <div className="flex flex-col gap-2">
                   <motion.a
-                    href="https://minaboules.com/wp-content/uploads/2025/10/Mena-Kelta-cv.pdf"
+                    href={cvUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.02 }}
@@ -96,7 +105,7 @@ const AboutSection = () => {
                     {t('about.resume')}
                   </motion.a>
                   <motion.a
-                    href="https://wa.me/201222112819"
+                    href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.02 }}
