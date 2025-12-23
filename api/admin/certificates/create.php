@@ -15,7 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 try {
     $database = new Database();
     $db = $database->getConnection();
-    $database->conn = $db;
     $auth = new Auth($database);
     $certManager = new CertificateManager($database);
 

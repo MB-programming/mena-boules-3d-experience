@@ -13,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 try {
     $database = new Database();
     $db = $database->getConnection();
-    $database->conn = $db;
     $service = new Service($database);
 
     $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;

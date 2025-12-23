@@ -204,7 +204,7 @@ class Quotation {
         if (isset($data['response_message'])) {
             $fields[] = "response_message = ?";
             $params[] = trim($data['response_message']);
-            $fields[] = "responded_at = NOW()";
+            $fields[] = "responded_at = datetime('now')";
         }
 
         if (empty($fields)) {

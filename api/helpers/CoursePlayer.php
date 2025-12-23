@@ -55,13 +55,13 @@ class CoursePlayer {
             // Update lesson progress
             $sql = "INSERT INTO lesson_progress 
                     (user_id, lesson_id, course_id, watched, watch_duration, last_position, completed, completed_at)
-                    VALUES (?, ?, ?, 1, ?, ?, ?, " . ($completed ? "NOW()" : "NULL") . ")
+                    VALUES (?, ?, ?, 1, ?, ?, ?, " . ($completed ? "datetime('now')" : "NULL") . ")
                     ON DUPLICATE KEY UPDATE 
                     watched = 1, 
                     watch_duration = ?,
                     last_position = ?,
                     completed = ?,
-                    completed_at = " . ($completed ? "COALESCE(completed_at, NOW())" : "completed_at");
+                    completed_at = " . ($completed ? "COALESCE(completed_at, datetime('now'))" : "completed_at");
             
             $this->db->execute($sql, [
                 $userId, $lessonId, $courseId, $watchDuration, $lastPosition, $completed,
@@ -109,12 +109,12 @@ class CoursePlayer {
         // Update course_progress
         $sql = "INSERT INTO course_progress 
                 (user_id, course_id, progress_percentage, last_watched_lesson, completed, completed_at)
-                VALUES (?, ?, ?, ?, ?, " . ($isCompleted ? "NOW()" : "NULL") . ")
+                VALUES (?, ?, ?, ?, ?, " . ($isCompleted ? "datetime('now')" : "NULL") . ")
                 ON DUPLICATE KEY UPDATE 
                 progress_percentage = ?,
                 last_watched_lesson = ?,
                 completed = ?,
-                completed_at = " . ($isCompleted ? "COALESCE(completed_at, NOW())" : "completed_at");
+                completed_at = " . ($isCompleted ? "COALESCE(completed_at, datetime('now'))" : "completed_at");
         
         $this->db->execute($sql, [
             $userId, $courseId, $percentage, $lastLessonId, $isCompleted,
@@ -123,7 +123,7 @@ class CoursePlayer {
 
         // Update enrollment
         $sql = "UPDATE course_enrollments 
-                SET progress = ?, completed = ?, completed_at = " . ($isCompleted ? "COALESCE(completed_at, NOW())" : "NULL") . "
+                SET progress = ?, completed = ?, completed_at = " . ($isCompleted ? "COALESCE(completed_at, datetime('now'))" : "NULL") . "
                 WHERE user_id = ? AND course_id = ?";
         $this->db->execute($sql, [$percentage, $isCompleted, $userId, $courseId]);
 

@@ -146,7 +146,7 @@ class Auth {
         $sql = "SELECT s.*, u.id, u.name, u.email, u.phone, u.avatar, u.role, u.status
                 FROM sessions s
                 INNER JOIN users u ON s.user_id = u.id
-                WHERE s.token = ? AND s.expires_at > NOW() AND u.status = 'active'";
+                WHERE s.token = ? AND s.expires_at > datetime('now') AND u.status = 'active'";
 
         $session = $this->db->querySingle($sql, [$token]);
 
@@ -222,7 +222,7 @@ class Auth {
         $sql = "SELECT pr.*, u.email
                 FROM password_resets pr
                 INNER JOIN users u ON pr.user_id = u.id
-                WHERE pr.token = ? AND pr.expires_at > NOW() AND pr.used = 0";
+                WHERE pr.token = ? AND pr.expires_at > datetime('now') AND pr.used = 0";
 
         $reset = $this->db->querySingle($sql, [$token]);
 
@@ -266,11 +266,11 @@ class Auth {
      */
     public function cleanExpired() {
         // Delete expired sessions
-        $sql = "DELETE FROM sessions WHERE expires_at < NOW()";
+        $sql = "DELETE FROM sessions WHERE expires_at < datetime('now')";
         $this->db->execute($sql);
 
         // Delete expired reset tokens
-        $sql = "DELETE FROM password_resets WHERE expires_at < NOW()";
+        $sql = "DELETE FROM password_resets WHERE expires_at < datetime('now')";
         $this->db->execute($sql);
     }
 }

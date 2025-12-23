@@ -9,7 +9,6 @@ require_once '../../middleware/admin.php';
 try {
     $database = new Database();
     $db = $database->getConnection();
-    $database->conn = $db;
     $auth = new Auth($database);
     $blogCategory = new BlogCategory($database);
     $admin = requireAdmin();

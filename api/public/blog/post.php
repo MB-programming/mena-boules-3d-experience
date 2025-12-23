@@ -13,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 try {
     $database = new Database();
     $db = $database->getConnection();
-    $database->conn = $db;
     $blog = new Blog($database);
 
     if (!isset($_GET['slug']) && !isset($_GET['id'])) {

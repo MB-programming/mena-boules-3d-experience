@@ -13,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 try {
     $database = new Database();
     $db = $database->getConnection();
-    $database->conn = $db;
     $serviceHelper = new Service($database);
 
     if (isset($_GET['slug'])) {

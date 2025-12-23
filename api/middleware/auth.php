@@ -5,7 +5,17 @@
  */
 
 function requireAuth() {
-    global $auth;
+    // Initialize auth if not already done
+    if (!isset($GLOBALS['auth'])) {
+        require_once __DIR__ . '/../config/database.php';
+        require_once __DIR__ . '/../helpers/Database.php';
+        require_once __DIR__ . '/../helpers/Auth.php';
+
+        $database = new Database();
+        $GLOBALS['auth'] = new Auth($database);
+    }
+
+    $auth = $GLOBALS['auth'];
 
     // Get token from header
     $headers = getallheaders();
@@ -47,7 +57,17 @@ function requireAuth() {
  * Get current authenticated user (optional auth)
  */
 function getCurrentUser() {
-    global $auth;
+    // Initialize auth if not already done
+    if (!isset($GLOBALS['auth'])) {
+        require_once __DIR__ . '/../config/database.php';
+        require_once __DIR__ . '/../helpers/Database.php';
+        require_once __DIR__ . '/../helpers/Auth.php';
+
+        $database = new Database();
+        $GLOBALS['auth'] = new Auth($database);
+    }
+
+    $auth = $GLOBALS['auth'];
 
     $headers = getallheaders();
     $token = null;

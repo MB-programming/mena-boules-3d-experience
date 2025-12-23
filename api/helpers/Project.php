@@ -85,13 +85,13 @@ class Project {
 
         $sql = "INSERT INTO projects
                 (title, slug, description, content, client_name, project_type, category, images,
-                video_url, completion_date, duration, technologies, is_published, featured, order_index, created_by)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                video_url, completion_date, duration, technologies, is_published, featured, order_index)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             $this->db->execute($sql, [
                 $title, $slug, $description, $content, $clientName, $projectType, $category, $images,
-                $videoUrl, $completionDate, $duration, $technologies, $isPublished, $featured, $orderIndex, $createdBy
+                $videoUrl, $completionDate, $duration, $technologies, $isPublished, $featured, $orderIndex
             ]);
 
             $projectId = $this->db->lastInsertId();
@@ -153,9 +153,8 @@ class Project {
         $countResult = $this->db->querySingle($countSql, $params);
         $total = $countResult['total'];
 
-        $sql = "SELECT p.*, u.name as creator_name
+        $sql = "SELECT p.*
                 FROM projects p
-                LEFT JOIN users u ON p.created_by = u.id
                 $whereClause
                 ORDER BY p.order_index ASC, p.created_at DESC
                 LIMIT ? OFFSET ?";
@@ -187,9 +186,8 @@ class Project {
      * Get project by ID
      */
     public function getById($id) {
-        $sql = "SELECT p.*, u.name as creator_name
+        $sql = "SELECT p.*
                 FROM projects p
-                LEFT JOIN users u ON p.created_by = u.id
                 WHERE p.id = ?";
 
         $project = $this->db->querySingle($sql, [$id]);
@@ -206,9 +204,8 @@ class Project {
      * Get project by slug
      */
     public function getBySlug($slug) {
-        $sql = "SELECT p.*, u.name as creator_name
+        $sql = "SELECT p.*
                 FROM projects p
-                LEFT JOIN users u ON p.created_by = u.id
                 WHERE p.slug = ?";
 
         $project = $this->db->querySingle($sql, [$slug]);

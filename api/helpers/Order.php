@@ -106,7 +106,7 @@ class Order {
             $this->db->beginTransaction();
 
             // Update order
-            $sql = "UPDATE orders SET payment_status = 'completed', paid_at = NOW() 
+            $sql = "UPDATE orders SET payment_status = 'completed', paid_at = datetime('now') 
                     WHERE id = ?";
             $this->db->execute($sql, [$orderId]);
 

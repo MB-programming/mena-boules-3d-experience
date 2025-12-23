@@ -13,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 try {
     $database = new Database();
     $db = $database->getConnection();
-    $database->conn = $db;
     $blog = new Blog($database);
 
     $page = isset($_GET['page']) ? intval($_GET['page']) : 1;

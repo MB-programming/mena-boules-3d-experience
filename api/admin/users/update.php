@@ -22,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'PUT' && $_SERVER['REQUEST_METHOD'] !== 'POST
 try {
     $database = new Database();
     $db = $database->getConnection();
-    $database->conn = $db;
     $auth = new Auth($database);
 
     // Require admin authentication

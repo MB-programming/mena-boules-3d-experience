@@ -13,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 try {
     $database = new Database();
     $db = $database->getConnection();
-    $database->conn = $db;
     $blogCategory = new BlogCategory($database);
 
     $result = $blogCategory->getAll(['is_active' => 1]);
