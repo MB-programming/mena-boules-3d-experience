@@ -46,8 +46,6 @@ try {
 
     // Initialize database and auth
     $database = new Database();
-    $db = $database->getConnection();
-    $database->conn = $db;
     $auth = new Auth($database);
 
     // Login user
