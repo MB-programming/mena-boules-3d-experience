@@ -1,0 +1,9 @@
+# Deny all access to SQLite database files
+<FilesMatch "\.(sqlite|sqlite3|db)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Deny all requests
+Order deny,allow
+Deny from all
