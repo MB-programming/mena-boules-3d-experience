@@ -75,16 +75,6 @@ const ServicesPreview = () => {
           ))}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center"
-        >
-          <Link to="/services" className="btn-outline inline-flex items-center gap-2">
-            View All Services <ArrowRight className="w-4 h-4" />
-          </Link>
-        </motion.div>
       </div>
     </section>
   );

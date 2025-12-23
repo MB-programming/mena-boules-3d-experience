@@ -16,6 +16,8 @@ const translations = {
     'nav.services': 'Services',
     'nav.about': 'About',
     'nav.skills': 'Skills',
+    'nav.certificates': 'Certificates',
+    'nav.experience': 'Worked With',
     'nav.projects': 'Works',
     'nav.courses': 'Courses',
     'nav.blog': 'Blog',

@@ -13,6 +13,9 @@ const Navbar = () => {
   const navItems = [
     { key: 'nav.home', href: isHomePage ? '#home' : '/' },
     { key: 'nav.services', href: isHomePage ? '#services' : '/#services' },
+    { key: 'nav.skills', href: isHomePage ? '#skills' : '/#skills' },
+    { key: 'nav.certificates', href: isHomePage ? '#certificates' : '/#certificates' },
+    { key: 'nav.experience', href: isHomePage ? '#experience' : '/#experience' },
     { key: 'nav.about', href: '/about' },
   ];
 
