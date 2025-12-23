@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, MessageCircle } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import NotificationBell from './NotificationBell';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,7 +16,6 @@ const Navbar = () => {
     { key: 'nav.projects', href: '/projects' },
     { key: 'nav.blog', href: '/blog' },
     { key: 'nav.about', href: '/about' },
-    { key: 'nav.contact', href: isHomePage ? '#contact' : '/#contact' },
   ];
 
   return (
@@ -61,8 +59,15 @@ const Navbar = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            {/* Notifications */}
-            <NotificationBell />
+            <motion.a
+              href={isHomePage ? '#contact' : '/#contact'}
+              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <MessageCircle className="w-4 h-4" />
+              Say Hello
+            </motion.a>
 
             <button
               className="md:hidden text-foreground"
