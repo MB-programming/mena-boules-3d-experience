@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المهارات - لوحة التحكم</title>
+    <link rel="stylesheet" href="assets/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .skill-icon-preview {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .color-preview {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 8px;
+            border: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-navbar">
+        <div class="nav-container">
+            <div class="nav-right">
+                <div class="logo"><i class="fas fa-cube"></i><span>Mena Boules 3D</span></div>
+                <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+            </div>
+            <div class="nav-left">
+                <div class="admin-profile">
+                    <img src="assets/img/default-avatar.png" alt="Admin" class="admin-avatar" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23667eea%22%3E%3Cpath d=%22M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z%22/%3E%3C/svg%3E'">
+                    <span class="admin-name" id="adminName">Admin</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="dropdown-menu" id="profileDropdown">
+                    <a href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <aside class="sidebar" id="sidebar">
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item"><i class="fas fa-home"></i><span>الرئيسية</span></a>
+                <a href="users.html" class="nav-item"><i class="fas fa-users"></i><span>المستخدمين</span></a>
+                <a href="projects.html" class="nav-item"><i class="fas fa-project-diagram"></i><span>المشاريع</span></a>
+                <a href="skills.html" class="nav-item active"><i class="fas fa-code"></i><span>المهارات</span></a>
+                <a href="companies.html" class="nav-item"><i class="fas fa-briefcase"></i><span>الشركات</span></a>
+                <a href="certificates.html" class="nav-item"><i class="fas fa-certificate"></i><span>الشهادات</span></a>
+                <a href="blog.html" class="nav-item"><i class="fas fa-blog"></i><span>المدونة</span></a>
+                <a href="content.html" class="nav-item"><i class="fas fa-edit"></i><span>إدارة المحتوى</span></a>
+                <div class="nav-divider"></div>
+                <a href="#" class="nav-item" onclick="logout(); return false;"><i class="fas fa-sign-out-alt"></i><span>تسجيل الخروج</span></a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>إدارة المهارات</h1>
+                <p>إضافة وتعديل وحذف المهارات التقنية</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>قائمة المهارات</h2>
+                    <div style="display: flex; gap: 12px;">
+                        <select id="filterCategory" class="form-control" style="max-width: 200px;" onchange="loadSkills()">
+                            <option value="">جميع التصنيفات</option>
+                            <option value="Design">Design</option>
+                            <option value="Frontend">Frontend</option>
+                            <option value="Backend">Backend</option>
+                            <option value="CMS">CMS</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="openAddModal()">
+                            <i class="fas fa-plus"></i> إضافة مهارة
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>الأيقونة</th>
+                                    <th>الاسم</th>
+                                    <th>التصنيف</th>
+                                    <th>اللون</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="skillsTable">
+                                <tr><td colspan="6" class="text-center"><i class="fas fa-spinner fa-spin"></i> جاري التحميل...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="paginationContainer"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="skillModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">إضافة مهارة</h3>
+                <button class="modal-close" onclick="closeModal('skillModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="skillForm">
+                    <input type="hidden" id="skillId">
+                    
+                    <div class="form-group">
+                        <label class="form-label">اسم المهارة *</label>
+                        <input type="text" id="name" class="form-control" required maxlength="50" placeholder="React, Figma, PHP...">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">اسم الأيقونة (Lucide) *</label>
+                        <input type="text" id="icon" class="form-control" required placeholder="Atom, Figma, Database...">
+                        <small>استخدم أسماء أيقونات Lucide React: <a href="https://lucide.dev/icons" target="_blank">lucide.dev/icons</a></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">التصنيف *</label>
+                        <select id="category" class="form-control" required>
+                            <option value="">اختر تصنيف</option>
+                            <option value="Design">Design</option>
+                            <option value="Frontend">Frontend</option>
+                            <option value="Backend">Backend</option>
+                            <option value="CMS">CMS</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">اللون (Hex) *</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="color" id="colorPicker" value="#667eea" onchange="document.getElementById('color').value = this.value">
+                            <input type="text" id="color" class="form-control" required placeholder="#667eea" maxlength="7" style="flex: 1;">
+                        </div>
+                        <small>اختر اللون من المنتقي أو أدخله مباشرة</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="isActive" checked>
+                            نشط (ظاهر في الموقع)
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="saveSkill()"><i class="fas fa-save"></i> حفظ</button>
+                <button class="btn btn-secondary" onclick="closeModal('skillModal')">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/admin.js"></script>
+    <script src="assets/js/skills.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = checkAuth();
+            if (user) {
+                document.getElementById('adminName').textContent = user.full_name || user.email;
+                loadSkills();
+            }
+        });
+
+        document.querySelector('.admin-profile').addEventListener('click', () => {
+            document.getElementById('profileDropdown').classList.toggle('show');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.admin-profile')) {
+                document.getElementById('profileDropdown').classList.remove('show');
+            }
+        });
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+        }
+
+        // Sync color picker with text input
+        document.getElementById('color').addEventListener('input', (e) => {
+            const val = e.target.value;
+            if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+                document.getElementById('colorPicker').value = val;
+            }
+        });
+    </script>
+</body>
+</html>
