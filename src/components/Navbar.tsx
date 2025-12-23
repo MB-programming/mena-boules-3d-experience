@@ -12,9 +12,7 @@ const Navbar = () => {
 
   const navItems = [
     { key: 'nav.home', href: isHomePage ? '#home' : '/' },
-    { key: 'nav.services', href: '/services' },
-    { key: 'nav.projects', href: '/projects' },
-    { key: 'nav.blog', href: '/blog' },
+    { key: 'nav.services', href: isHomePage ? '#services' : '/#services' },
     { key: 'nav.about', href: '/about' },
   ];
 

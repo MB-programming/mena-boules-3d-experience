@@ -53,8 +53,8 @@ const HeroSection = () => {
               transition={{ duration: 0.8, delay: 0.8 }}
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center mb-8"
             >
-              <a href="#projects" className="btn-primary">
-                {t('hero.cta')}
+              <a href="https://wa.me/201014959132" target="_blank" rel="noopener noreferrer" className="btn-primary">
+                Say Hello
               </a>
               <motion.button
                 onClick={() => setIsVideoOpen(true)}
