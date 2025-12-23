@@ -1,118 +1,18 @@
 import { motion, useAnimationControls } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { CheckCircle, ExternalLink } from 'lucide-react';
-
-const certificates = [
-  {
-    institution: 'Suez Canal University',
-    degree: 'Commerce, Business, Management',
-    credentialId: '',
-    year: '2021 - Present',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/1631351054305.jpeg',
-    verifyUrl: '',
-    isEducation: true,
-  },
-  {
-    institution: 'Microsoft',
-    degree: 'Microsoft Technology Associate Developer',
-    credentialId: 'eQQq-4TkJ',
-    year: '2022',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/microsoft_logo-1.jpeg',
-    verifyUrl: 'https://www.microsoft.com/en-us/learning/mta-certification.aspx',
-    isEducation: false,
-  },
-  {
-    institution: 'MCIT',
-    degree: 'Egypt FWD Web Development Challenger Track',
-    credentialId: 'FFFYMXGS',
-    year: '2022',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/ministry_of_communications_and_information_technology_logo.jpeg',
-    verifyUrl: 'https://egfwd.com/',
-    isEducation: false,
-  },
-  {
-    institution: 'Udacity',
-    degree: 'Full Stack Development Track',
-    credentialId: 'KGAQCUGH',
-    year: '2019',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/udacity_logo.jpeg',
-    verifyUrl: 'https://confirm.udacity.com/KGAQCUGH',
-    isEducation: false,
-  },
-  {
-    institution: 'IBM',
-    degree: 'HTML & CSS & JavaScript Advanced',
-    credentialId: '2c6c17cc-5d82-4dd4-a20a-057d2cf8711b',
-    year: '2022',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/ibm_logo.jpeg',
-    verifyUrl: 'https://www.ibm.com/training/',
-    isEducation: false,
-  },
-  {
-    institution: 'Google',
-    degree: 'Google Digital Marketing',
-    credentialId: 'ZCS T5H ZQ8',
-    year: '2022',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/google_logo.jpeg',
-    verifyUrl: 'https://learndigital.withgoogle.com/digitalgarage',
-    isEducation: false,
-  },
-  {
-    institution: 'Udemy',
-    degree: 'Advanced UI/UX Design',
-    credentialId: '',
-    year: '2022',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/unnamed-1.png',
-    verifyUrl: 'https://www.udemy.com/',
-    isEducation: false,
-  },
-  {
-    institution: 'Eduonix',
-    degree: 'E-Learning Websites',
-    credentialId: 'd2dc8a14e5',
-    year: '2020',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/1630567253611.jpeg',
-    verifyUrl: 'https://www.eduonix.com/',
-    isEducation: false,
-  },
-  {
-    institution: 'Edraak',
-    degree: 'ICDL Specto & Edraak',
-    credentialId: '24f2e9c304b2474da5c2d1064c7a32c7',
-    year: '2019',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/edraak_logo.jpeg',
-    verifyUrl: 'https://www.edraak.org/',
-    isEducation: false,
-  },
-  {
-    institution: 'Kingston Business Academy',
-    degree: 'Certified Technology Trainer',
-    credentialId: 'MENA 00391',
-    year: '2021',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/1630635170868.jpeg',
-    verifyUrl: '#',
-    isEducation: false,
-  },
-  {
-    institution: 'Ministry of Education',
-    degree: 'Certified Technology Trainer',
-    credentialId: '',
-    year: '2019 - 2025',
-    logo: 'https://minaboules.com/wp-content/uploads/2025/10/unnamed-1.jpg',
-    verifyUrl: '#',
-    isEducation: false,
-  },
-];
-
-// Duplicate for seamless loop
-const duplicatedCertificates = [...certificates, ...certificates];
+import { CheckCircle } from 'lucide-react';
+import { useCertificates } from '@/hooks/useCertificates';
 
 const CertificatesSlider = () => {
   const [isPaused, setIsPaused] = useState(false);
   const controls = useAnimationControls();
+  const { data: certificates = [], isLoading } = useCertificates();
+
+  // Duplicate for seamless loop
+  const duplicatedCertificates = [...certificates, ...certificates];
 
   useEffect(() => {
-    if (!isPaused) {
+    if (!isPaused && certificates.length > 0) {
       controls.start({
         y: [0, -76 * certificates.length],
         transition: {
@@ -127,7 +27,26 @@ const CertificatesSlider = () => {
     } else {
       controls.stop();
     }
-  }, [isPaused, controls]);
+  }, [isPaused, controls, certificates.length]);
+
+  if (isLoading) {
+    return (
+      <div className="relative h-[500px] overflow-hidden">
+        <div className="space-y-3">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="glass-card p-3 flex items-center gap-3 animate-pulse">
+              <div className="w-12 h-12 rounded-xl bg-muted" />
+              <div className="flex-1">
+                <div className="w-40 h-4 bg-muted rounded mb-2" />
+                <div className="w-24 h-3 bg-muted rounded mb-1" />
+                <div className="w-16 h-3 bg-muted rounded" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div 
