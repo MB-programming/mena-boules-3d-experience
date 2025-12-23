@@ -4,64 +4,7 @@ import { Search, Filter, ExternalLink, Eye, ArrowRight, Grid, LayoutList } from 
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { GlowIcon } from '../components/AnimatedIcon';
-
-// Import project images
-import boImg from '@/assets/projects/bo.jpg';
-import cozmeticImg from '@/assets/projects/cozmetic.jpg';
-import xendouImg from '@/assets/projects/xendou.jpg';
-import blvckImg from '@/assets/projects/blvck.jpg';
-
-export const allProjects = [
-  {
-    id: 1,
-    title: 'B & O',
-    slug: 'b-and-o',
-    category: 'branding',
-    description: 'Premium audio brand with elegant marketing site design and sophisticated visual identity.',
-    image: boImg,
-    tags: ['Branding', 'Web Design', 'Development'],
-    link: 'https://minaboules.com/portfolio/b-o/',
-    price: '$1,500',
-    technologies: ['React', 'GSAP', 'Tailwind CSS'],
-  },
-  {
-    id: 2,
-    title: 'Cozmetic',
-    slug: 'cozmetic',
-    category: 'uiux',
-    description: 'Beauty e-commerce platform with stunning product showcases and seamless shopping experience.',
-    image: cozmeticImg,
-    tags: ['UI/UX', 'E-Commerce', 'Beauty'],
-    link: 'https://minaboules.com/portfolio/cozmetic/',
-    price: '$2,000',
-    technologies: ['Next.js', 'Shopify', 'Framer Motion'],
-  },
-  {
-    id: 3,
-    title: 'Xendou',
-    slug: 'xendou',
-    category: 'product',
-    description: 'SaaS platform with intuitive dashboard design and powerful analytics features.',
-    image: xendouImg,
-    tags: ['Product', 'Web App', 'SaaS'],
-    link: 'https://minaboules.com/portfolio/xendou/',
-    price: '$3,000',
-    technologies: ['React', 'Node.js', 'PostgreSQL'],
-  },
-  {
-    id: 4,
-    title: 'Blvck',
-    slug: 'blvck',
-    category: 'branding',
-    description: 'Luxury lifestyle brand with dark aesthetic and minimalist design approach.',
-    image: blvckImg,
-    tags: ['Branding', 'Dark Theme', 'Luxury'],
-    link: 'https://minaboules.com/portfolio/blvck/',
-    price: '$2,500',
-    technologies: ['WordPress', 'Custom Theme', 'WooCommerce'],
-  },
-];
+import { useProjects } from '@/hooks/useProjects';
 
 const categories = [
   { key: 'all', label: 'All Projects' },
@@ -77,11 +20,12 @@ const Projects = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [hoveredId, setHoveredId] = useState<number | null>(null);
 
-  const filteredProjects = allProjects.filter((project) => {
-    const matchesCategory = activeCategory === 'all' || project.category === activeCategory;
+  const { data: projects = [], isLoading } = useProjects(activeCategory);
+
+  const filteredProjects = projects.filter((project) => {
     const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           project.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+    return matchesSearch;
   });
 
   return (
@@ -164,116 +108,137 @@ const Projects = () => {
             ))}
           </motion.div>
 
+          {/* Loading State */}
+          {isLoading && (
+            <div className={`${viewMode === 'grid' ? 'grid md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}`}>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="glass-card overflow-hidden animate-pulse">
+                  <div className="h-56 bg-muted" />
+                  <div className="p-5 space-y-3">
+                    <div className="w-32 h-5 bg-muted rounded" />
+                    <div className="w-full h-12 bg-muted rounded" />
+                    <div className="flex gap-2">
+                      <div className="w-16 h-6 bg-muted rounded-full" />
+                      <div className="w-16 h-6 bg-muted rounded-full" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* Projects Grid/List */}
-          <div className={`${viewMode === 'grid' ? 'grid md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}`}>
-            {filteredProjects.map((project, index) => (
-              viewMode === 'grid' ? (
-                <motion.div
-                  key={project.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 * index }}
-                  onMouseEnter={() => setHoveredId(project.id)}
-                  onMouseLeave={() => setHoveredId(null)}
-                  className="glass-card overflow-hidden group hover-glow"
-                >
-                  {/* Image */}
-                  <div className="relative h-56 overflow-hidden">
-                    <motion.img
+          {!isLoading && (
+            <div className={`${viewMode === 'grid' ? 'grid md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}`}>
+              {filteredProjects.map((project, index) => (
+                viewMode === 'grid' ? (
+                  <motion.div
+                    key={project.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.05 * index }}
+                    onMouseEnter={() => setHoveredId(project.id)}
+                    onMouseLeave={() => setHoveredId(null)}
+                    className="glass-card overflow-hidden group hover-glow"
+                  >
+                    {/* Image */}
+                    <div className="relative h-56 overflow-hidden">
+                      <motion.img
+                        src={project.image}
+                        alt={project.title}
+                        className="w-full h-full object-cover"
+                        animate={{ scale: hoveredId === project.id ? 1.1 : 1 }}
+                        transition={{ duration: 0.5 }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                      
+                      {/* Price Badge */}
+                      <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-primary text-primary-foreground text-sm font-medium">
+                        {project.price}
+                      </div>
+
+                      {/* Hover Actions */}
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: hoveredId === project.id ? 1 : 0 }}
+                        className="absolute inset-0 bg-primary/20 backdrop-blur-sm flex items-center justify-center gap-3"
+                      >
+                        <Link
+                          to={`/project/${project.slug}`}
+                          className="w-12 h-12 rounded-full bg-background/90 flex items-center justify-center text-primary hover:scale-110 transition-transform"
+                        >
+                          <Eye className="w-5 h-5" />
+                        </Link>
+                        <a
+                          href={project.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-12 h-12 rounded-full bg-background/90 flex items-center justify-center text-primary hover:scale-110 transition-transform"
+                        >
+                          <ExternalLink className="w-5 h-5" />
+                        </a>
+                      </motion.div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-5">
+                      <Link to={`/project/${project.slug}`}>
+                        <h3 className="font-display font-bold text-lg mb-2 group-hover:text-primary transition-colors">
+                          {project.title}
+                        </h3>
+                      </Link>
+                      <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+                        {project.description}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {project.tags.slice(0, 3).map((tag) => (
+                          <span key={tag} className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key={project.id}
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.05 * index }}
+                    className="glass-card p-4 flex gap-6 items-center hover-glow"
+                  >
+                    <img
                       src={project.image}
                       alt={project.title}
-                      className="w-full h-full object-cover"
-                      animate={{ scale: hoveredId === project.id ? 1.1 : 1 }}
-                      transition={{ duration: 0.5 }}
+                      className="w-32 h-24 object-cover rounded-lg"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-                    
-                    {/* Price Badge */}
-                    <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-primary text-primary-foreground text-sm font-medium">
-                      {project.price}
+                    <div className="flex-1">
+                      <h3 className="font-display font-bold text-lg mb-1">{project.title}</h3>
+                      <p className="text-muted-foreground text-sm mb-2">{project.description}</p>
+                      <div className="flex gap-2">
+                        {project.tags.map((tag) => (
+                          <span key={tag} className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-
-                    {/* Hover Actions */}
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: hoveredId === project.id ? 1 : 0 }}
-                      className="absolute inset-0 bg-primary/20 backdrop-blur-sm flex items-center justify-center gap-3"
-                    >
+                    <div className="text-right">
+                      <div className="text-primary font-bold mb-2">{project.price}</div>
                       <Link
                         to={`/project/${project.slug}`}
-                        className="w-12 h-12 rounded-full bg-background/90 flex items-center justify-center text-primary hover:scale-110 transition-transform"
+                        className="btn-primary text-sm py-2 px-4 inline-flex items-center gap-2"
                       >
-                        <Eye className="w-5 h-5" />
+                        View <ArrowRight className="w-4 h-4" />
                       </Link>
-                      <a
-                        href={project.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-12 h-12 rounded-full bg-background/90 flex items-center justify-center text-primary hover:scale-110 transition-transform"
-                      >
-                        <ExternalLink className="w-5 h-5" />
-                      </a>
-                    </motion.div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-5">
-                    <Link to={`/project/${project.slug}`}>
-                      <h3 className="font-display font-bold text-lg mb-2 group-hover:text-primary transition-colors">
-                        {project.title}
-                      </h3>
-                    </Link>
-                    <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                      {project.description}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {project.tags.slice(0, 3).map((tag) => (
-                        <span key={tag} className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
-                          {tag}
-                        </span>
-                      ))}
                     </div>
-                  </div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key={project.id}
-                  initial={{ opacity: 0, x: -30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.05 * index }}
-                  className="glass-card p-4 flex gap-6 items-center hover-glow"
-                >
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-32 h-24 object-cover rounded-lg"
-                  />
-                  <div className="flex-1">
-                    <h3 className="font-display font-bold text-lg mb-1">{project.title}</h3>
-                    <p className="text-muted-foreground text-sm mb-2">{project.description}</p>
-                    <div className="flex gap-2">
-                      {project.tags.map((tag) => (
-                        <span key={tag} className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-primary font-bold mb-2">{project.price}</div>
-                    <Link
-                      to={`/project/${project.slug}`}
-                      className="btn-primary text-sm py-2 px-4 inline-flex items-center gap-2"
-                    >
-                      View <ArrowRight className="w-4 h-4" />
-                    </Link>
-                  </div>
-                </motion.div>
-              )
-            ))}
-          </div>
+                  </motion.div>
+                )
+              ))}
+            </div>
+          )}
 
-          {filteredProjects.length === 0 && (
+          {!isLoading && filteredProjects.length === 0 && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
