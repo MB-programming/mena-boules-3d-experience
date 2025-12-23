@@ -1,13 +1,10 @@
 <?php
 /**
- * Database Configuration
+ * Database Configuration for SQLite
  */
 
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'u186120816_cv');
-define('DB_USER', 'u186120816_cv');
-define('DB_PASS', '?36PRDYk');
-define('DB_CHARSET', 'utf8mb4');
+// SQLite Database Path
+define('DB_PATH', __DIR__ . '/../data/database.sqlite');
 
 // Application Settings
 define('APP_NAME', 'Mena Boules 3D Experience');
