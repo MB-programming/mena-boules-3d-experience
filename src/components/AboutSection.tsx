@@ -123,19 +123,21 @@ const AboutSection = () => {
 
           {/* Experience Slider */}
           <motion.div
+            id="experience"
             initial={{ opacity: 0, y: 50 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
             <h3 className="text-lg sm:text-xl font-display font-semibold mb-4 sm:mb-6 flex items-center gap-2">
               <GlowIcon Icon={Briefcase} size={20} className="text-primary sm:w-6 sm:h-6" />
-              Companies I Worked With
+              Worked With
             </h3>
             <ExperienceSlider />
           </motion.div>
 
           {/* Education & Certificates */}
           <motion.div
+            id="certificates"
             initial={{ opacity: 0, x: 50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.6 }}
