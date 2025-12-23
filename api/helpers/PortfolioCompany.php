@@ -1,14 +1,20 @@
 <?php
-class Company {
+/**
+ * Portfolio Company Helper Class
+ * Handles companies/experience for portfolio display
+ */
+
+class PortfolioCompany {
     private $db;
 
     public function __construct($database) {
         $this->db = $database;
     }
 
-    // Get all companies
-    public function getAll($page = 1, $limit = 50, $filters = []) {
-        $offset = ($page - 1) * $limit;
+    /**
+     * Get all companies
+     */
+    public function getAll($filters = []) {
         $where = [];
         $params = [];
 
@@ -32,32 +38,22 @@ class Company {
 
         $whereClause = !empty($where) ? "WHERE " . implode(" AND ", $where) : "";
 
-        // Get total count
-        $countQuery = "SELECT COUNT(*) as total FROM companies $whereClause";
-        $totalResult = $this->db->querySingle($countQuery, $params);
-        $total = $totalResult['total'];
-
-        // Get companies
-        $query = "SELECT * FROM companies $whereClause ORDER BY order_index ASC, start_date DESC LIMIT ? OFFSET ?";
-        $params[] = $limit;
-        $params[] = $offset;
-
-        $companies = $this->db->query($query, $params);
+        $sql = "SELECT * FROM companies $whereClause ORDER BY order_index ASC, start_date DESC";
+        $companies = $this->db->query($sql, $params);
 
         return [
             'success' => true,
             'companies' => $companies,
-            'total' => $total,
-            'page' => $page,
-            'limit' => $limit,
-            'total_pages' => ceil($total / $limit)
+            'total' => count($companies)
         ];
     }
 
-    // Get company by ID
+    /**
+     * Get company by ID
+     */
     public function getById($id) {
-        $query = "SELECT * FROM companies WHERE id = ?";
-        $company = $this->db->querySingle($query, [$id]);
+        $sql = "SELECT * FROM companies WHERE id = ?";
+        $company = $this->db->querySingle($sql, [$id]);
 
         if (!$company) {
             return ['success' => false, 'message' => 'الشركة غير موجودة'];
@@ -66,37 +62,38 @@ class Company {
         return ['success' => true, 'company' => $company];
     }
 
-    // Create company
+    /**
+     * Create company
+     */
     public function create($data) {
         if (!isset($data['name']) || empty(trim($data['name']))) {
             return ['success' => false, 'message' => 'اسم الشركة مطلوب'];
         }
 
-        $query = "INSERT INTO companies (
-            name, name_ar, logo, website, description, description_ar,
-            role, role_ar, start_date, end_date, is_current, order_index, is_active
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO companies (name, name_ar, logo, website, description, description_ar, 
+                role, role_ar, start_date, end_date, is_current, order_index, is_active)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $params = [
             trim($data['name']),
             isset($data['name_ar']) ? trim($data['name_ar']) : null,
-            $data['logo'] ?? null,
-            $data['website'] ?? null,
-            $data['description'] ?? null,
-            $data['description_ar'] ?? null,
-            $data['role'] ?? null,
-            $data['role_ar'] ?? null,
-            $data['start_date'] ?? null,
-            $data['end_date'] ?? null,
-            isset($data['is_current']) ? (int)$data['is_current'] : 0,
-            $data['order_index'] ?? 0,
-            isset($data['is_active']) ? (int)$data['is_active'] : 1
+            isset($data['logo']) ? trim($data['logo']) : null,
+            isset($data['website']) ? trim($data['website']) : null,
+            isset($data['description']) ? trim($data['description']) : null,
+            isset($data['description_ar']) ? trim($data['description_ar']) : null,
+            isset($data['role']) ? trim($data['role']) : null,
+            isset($data['role_ar']) ? trim($data['role_ar']) : null,
+            isset($data['start_date']) ? $data['start_date'] : null,
+            isset($data['end_date']) ? $data['end_date'] : null,
+            isset($data['is_current']) ? intval($data['is_current']) : 0,
+            isset($data['order_index']) ? intval($data['order_index']) : 0,
+            isset($data['is_active']) ? intval($data['is_active']) : 1
         ];
 
         try {
-            $this->db->execute($query, $params);
+            $this->db->execute($sql, $params);
             $id = $this->db->lastInsertId();
-            
+
             return [
                 'success' => true,
                 'message' => 'تم إضافة الشركة بنجاح',
@@ -108,7 +105,9 @@ class Company {
         }
     }
 
-    // Update company
+    /**
+     * Update company
+     */
     public function update($id, $data) {
         $existing = $this->getById($id);
         if (!$existing['success']) {
@@ -139,10 +138,10 @@ class Company {
         $fields[] = "updated_at = datetime('now')";
         $params[] = $id;
 
-        $query = "UPDATE companies SET " . implode(', ', $fields) . " WHERE id = ?";
+        $sql = "UPDATE companies SET " . implode(', ', $fields) . " WHERE id = ?";
 
         try {
-            $this->db->execute($query, $params);
+            $this->db->execute($sql, $params);
             return [
                 'success' => true,
                 'message' => 'تم تحديث الشركة بنجاح',
@@ -154,38 +153,18 @@ class Company {
         }
     }
 
-    // Delete company
+    /**
+     * Delete company
+     */
     public function delete($id) {
-        $query = "DELETE FROM companies WHERE id = ?";
+        $sql = "DELETE FROM companies WHERE id = ?";
         
         try {
-            $this->db->execute($query, [$id]);
+            $this->db->execute($sql, [$id]);
             return ['success' => true, 'message' => 'تم حذف الشركة بنجاح'];
         } catch (Exception $e) {
             error_log("Company Delete Error: " . $e->getMessage());
             return ['success' => false, 'message' => 'فشل حذف الشركة'];
-        }
-    }
-
-    // Update display order
-    public function updateOrder($orders) {
-        try {
-            $this->db->beginTransaction();
-
-            foreach ($orders as $order) {
-                if (!isset($order['id']) || !isset($order['order_index'])) {
-                    continue;
-                }
-
-                $query = "UPDATE companies SET order_index = ? WHERE id = ?";
-                $this->db->execute($query, [$order['order_index'], $order['id']]);
-            }
-
-            $this->db->commit();
-            return ['success' => true, 'message' => 'تم تحديث الترتيب بنجاح'];
-        } catch (Exception $e) {
-            $this->db->rollback();
-            return ['success' => false, 'message' => 'فشل تحديث الترتيب'];
         }
     }
 }
