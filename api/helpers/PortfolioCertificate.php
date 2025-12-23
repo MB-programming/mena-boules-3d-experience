@@ -1,14 +1,20 @@
 <?php
-class CertificateManager {
+/**
+ * Portfolio Certificate Helper Class
+ * Handles education/certificates for portfolio display
+ */
+
+class PortfolioCertificate {
     private $db;
 
     public function __construct($database) {
         $this->db = $database;
     }
 
-    // Get all certificates
-    public function getAll($page = 1, $limit = 50, $filters = []) {
-        $offset = ($page - 1) * $limit;
+    /**
+     * Get all certificates
+     */
+    public function getAll($filters = []) {
         $where = [];
         $params = [];
 
@@ -27,32 +33,22 @@ class CertificateManager {
 
         $whereClause = !empty($where) ? "WHERE " . implode(" AND ", $where) : "";
 
-        // Get total count
-        $countQuery = "SELECT COUNT(*) as total FROM certificates $whereClause";
-        $totalResult = $this->db->querySingle($countQuery, $params);
-        $total = $totalResult['total'];
-
-        // Get certificates
-        $query = "SELECT * FROM certificates $whereClause ORDER BY order_index ASC, issue_date DESC LIMIT ? OFFSET ?";
-        $params[] = $limit;
-        $params[] = $offset;
-
-        $certificates = $this->db->query($query, $params);
+        $sql = "SELECT * FROM certificates $whereClause ORDER BY order_index ASC, issue_date DESC";
+        $certificates = $this->db->query($sql, $params);
 
         return [
             'success' => true,
             'certificates' => $certificates,
-            'total' => $total,
-            'page' => $page,
-            'limit' => $limit,
-            'total_pages' => ceil($total / $limit)
+            'total' => count($certificates)
         ];
     }
 
-    // Get certificate by ID
+    /**
+     * Get certificate by ID
+     */
     public function getById($id) {
-        $query = "SELECT * FROM certificates WHERE id = ?";
-        $certificate = $this->db->querySingle($query, [$id]);
+        $sql = "SELECT * FROM certificates WHERE id = ?";
+        $certificate = $this->db->querySingle($sql, [$id]);
 
         if (!$certificate) {
             return ['success' => false, 'message' => 'الشهادة غير موجودة'];
@@ -61,37 +57,38 @@ class CertificateManager {
         return ['success' => true, 'certificate' => $certificate];
     }
 
-    // Create certificate
+    /**
+     * Create certificate
+     */
     public function create($data) {
         if (!isset($data['title']) || empty(trim($data['title']))) {
             return ['success' => false, 'message' => 'عنوان الشهادة مطلوب'];
         }
 
-        $query = "INSERT INTO certificates (
-            title, title_ar, issuer, issuer_ar, issue_date, expiry_date,
-            credential_id, credential_url, image, description, description_ar, order_index, is_active
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO certificates (title, title_ar, issuer, issuer_ar, issue_date, expiry_date, 
+                credential_id, credential_url, image, description, description_ar, order_index, is_active)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $params = [
             trim($data['title']),
             isset($data['title_ar']) ? trim($data['title_ar']) : null,
-            $data['issuer'] ?? null,
-            $data['issuer_ar'] ?? null,
-            $data['issue_date'] ?? null,
-            $data['expiry_date'] ?? null,
-            $data['credential_id'] ?? null,
-            $data['credential_url'] ?? null,
-            $data['image'] ?? null,
-            $data['description'] ?? null,
-            $data['description_ar'] ?? null,
-            $data['order_index'] ?? 0,
-            isset($data['is_active']) ? (int)$data['is_active'] : 1
+            isset($data['issuer']) ? trim($data['issuer']) : null,
+            isset($data['issuer_ar']) ? trim($data['issuer_ar']) : null,
+            isset($data['issue_date']) ? $data['issue_date'] : null,
+            isset($data['expiry_date']) ? $data['expiry_date'] : null,
+            isset($data['credential_id']) ? trim($data['credential_id']) : null,
+            isset($data['credential_url']) ? trim($data['credential_url']) : null,
+            isset($data['image']) ? trim($data['image']) : null,
+            isset($data['description']) ? trim($data['description']) : null,
+            isset($data['description_ar']) ? trim($data['description_ar']) : null,
+            isset($data['order_index']) ? intval($data['order_index']) : 0,
+            isset($data['is_active']) ? intval($data['is_active']) : 1
         ];
 
         try {
-            $this->db->execute($query, $params);
+            $this->db->execute($sql, $params);
             $id = $this->db->lastInsertId();
-            
+
             return [
                 'success' => true,
                 'message' => 'تم إضافة الشهادة بنجاح',
@@ -103,7 +100,9 @@ class CertificateManager {
         }
     }
 
-    // Update certificate
+    /**
+     * Update certificate
+     */
     public function update($id, $data) {
         $existing = $this->getById($id);
         if (!$existing['success']) {
@@ -135,10 +134,10 @@ class CertificateManager {
         $fields[] = "updated_at = datetime('now')";
         $params[] = $id;
 
-        $query = "UPDATE certificates SET " . implode(', ', $fields) . " WHERE id = ?";
+        $sql = "UPDATE certificates SET " . implode(', ', $fields) . " WHERE id = ?";
 
         try {
-            $this->db->execute($query, $params);
+            $this->db->execute($sql, $params);
             return [
                 'success' => true,
                 'message' => 'تم تحديث الشهادة بنجاح',
@@ -150,38 +149,18 @@ class CertificateManager {
         }
     }
 
-    // Delete certificate
+    /**
+     * Delete certificate
+     */
     public function delete($id) {
-        $query = "DELETE FROM certificates WHERE id = ?";
+        $sql = "DELETE FROM certificates WHERE id = ?";
         
         try {
-            $this->db->execute($query, [$id]);
+            $this->db->execute($sql, [$id]);
             return ['success' => true, 'message' => 'تم حذف الشهادة بنجاح'];
         } catch (Exception $e) {
             error_log("Certificate Delete Error: " . $e->getMessage());
             return ['success' => false, 'message' => 'فشل حذف الشهادة'];
-        }
-    }
-
-    // Update display order
-    public function updateOrder($orders) {
-        try {
-            $this->db->beginTransaction();
-
-            foreach ($orders as $order) {
-                if (!isset($order['id']) || !isset($order['order_index'])) {
-                    continue;
-                }
-
-                $query = "UPDATE certificates SET order_index = ? WHERE id = ?";
-                $this->db->execute($query, [$order['order_index'], $order['id']]);
-            }
-
-            $this->db->commit();
-            return ['success' => true, 'message' => 'تم تحديث الترتيب بنجاح'];
-        } catch (Exception $e) {
-            $this->db->rollback();
-            return ['success' => false, 'message' => 'فشل تحديث الترتيب'];
         }
     }
 }
