@@ -5,13 +5,14 @@ import { ArrowLeft, ExternalLink, Calendar, Tag, Code, CheckCircle, MessageCircl
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { GlowIcon } from '../components/AnimatedIcon';
-import { allProjects } from './Projects';
+import { useProject, useProjects } from '@/hooks/useProjects';
 import { useToast } from '@/hooks/use-toast';
 
 const ProjectDetail = () => {
   const { slug } = useParams();
   const { toast } = useToast();
-  const project = allProjects.find(p => p.slug === slug);
+  const { data: project, isLoading } = useProject(slug || '');
+  const { data: allProjects = [] } = useProjects();
   
   const [formData, setFormData] = useState({
     name: '',
@@ -21,6 +22,30 @@ const ProjectDetail = () => {
     description: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <section className="pt-28 pb-12 px-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="animate-pulse">
+              <div className="w-32 h-6 bg-muted rounded mb-8" />
+              <div className="grid lg:grid-cols-2 gap-12">
+                <div className="glass-card h-[400px] bg-muted" />
+                <div className="space-y-4">
+                  <div className="w-24 h-6 bg-muted rounded" />
+                  <div className="w-64 h-10 bg-muted rounded" />
+                  <div className="w-full h-24 bg-muted rounded" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!project) {
     return (
@@ -59,6 +84,8 @@ const ProjectDetail = () => {
     'Cross-Browser Compatible',
     'Mobile First Approach',
   ];
+
+  const relatedProjects = allProjects.filter(p => p.id !== project.id).slice(0, 2);
 
   return (
     <div className="min-h-screen bg-background">
@@ -207,20 +234,24 @@ const ProjectDetail = () => {
             </div>
 
             {/* Related Projects */}
-            <h2 className="text-2xl font-display font-bold mt-12 mb-6">Similar Projects</h2>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {allProjects.filter(p => p.id !== project.id).slice(0, 2).map((p) => (
-                <Link key={p.id} to={`/project/${p.slug}`} className="glass-card overflow-hidden group hover-glow">
-                  <img src={p.image} alt={p.title} className="w-full h-32 object-cover" />
-                  <div className="p-4">
-                    <h4 className="font-display font-semibold group-hover:text-primary transition-colors">
-                      {p.title}
-                    </h4>
-                    <p className="text-sm text-muted-foreground">{p.price}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
+            {relatedProjects.length > 0 && (
+              <>
+                <h2 className="text-2xl font-display font-bold mt-12 mb-6">Similar Projects</h2>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {relatedProjects.map((p) => (
+                    <Link key={p.id} to={`/project/${p.slug}`} className="glass-card overflow-hidden group hover-glow">
+                      <img src={p.image} alt={p.title} className="w-full h-32 object-cover" />
+                      <div className="p-4">
+                        <h4 className="font-display font-semibold group-hover:text-primary transition-colors">
+                          {p.title}
+                        </h4>
+                        <p className="text-sm text-muted-foreground">{p.price}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </>
+            )}
           </motion.div>
 
           {/* Request Form */}

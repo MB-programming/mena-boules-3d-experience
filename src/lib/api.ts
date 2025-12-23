@@ -156,3 +156,100 @@ export async function getHomeContent(): Promise<HomeContent | null> {
   const response = await fetchAPI<HomeContentResponse>('/public/content/home.php');
   return response.content || null;
 }
+
+// Blog Posts API
+export interface BlogPost {
+  id: number;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  category_id: number;
+  category_name: string;
+  image: string;
+  date: string;
+  read_time: number;
+  author: string;
+  is_active: number;
+}
+
+export interface BlogPostsResponse {
+  success: boolean;
+  data: BlogPost[];
+}
+
+export interface BlogPostResponse {
+  success: boolean;
+  data: BlogPost;
+}
+
+export async function getBlogPosts(category?: string): Promise<BlogPost[]> {
+  let endpoint = '/public/blog/posts.php';
+  if (category && category !== 'all') {
+    endpoint += `?category=${encodeURIComponent(category)}`;
+  }
+  const response = await fetchAPI<BlogPostsResponse>(endpoint);
+  return response.data || [];
+}
+
+export async function getBlogPost(slug: string): Promise<BlogPost | null> {
+  const response = await fetchAPI<BlogPostResponse>(`/public/blog/post.php?slug=${encodeURIComponent(slug)}`);
+  return response.data || null;
+}
+
+// Blog Categories API
+export interface BlogCategory {
+  id: number;
+  name: string;
+  slug: string;
+  is_active: number;
+}
+
+export interface BlogCategoriesResponse {
+  success: boolean;
+  data: BlogCategory[];
+}
+
+export async function getBlogCategories(): Promise<BlogCategory[]> {
+  const response = await fetchAPI<BlogCategoriesResponse>('/public/blog/categories.php');
+  return response.data || [];
+}
+
+// Projects API
+export interface Project {
+  id: number;
+  title: string;
+  slug: string;
+  category: string;
+  description: string;
+  image: string;
+  tags: string;
+  link: string;
+  price: string;
+  technologies: string;
+  is_active: number;
+}
+
+export interface ProjectsResponse {
+  success: boolean;
+  data: Project[];
+}
+
+export interface ProjectResponse {
+  success: boolean;
+  data: Project;
+}
+
+export async function getProjects(category?: string): Promise<Project[]> {
+  let endpoint = '/public/projects/index.php';
+  if (category && category !== 'all') {
+    endpoint += `?category=${encodeURIComponent(category)}`;
+  }
+  const response = await fetchAPI<ProjectsResponse>(endpoint);
+  return response.data || [];
+}
+
+export async function getProject(slug: string): Promise<Project | null> {
+  const response = await fetchAPI<ProjectResponse>(`/public/projects/get.php?slug=${encodeURIComponent(slug)}`);
+  return response.data || null;
+}
