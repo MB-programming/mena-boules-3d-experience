@@ -17,8 +17,13 @@ const ContactSection = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success('Message sent successfully!');
-    setFormData({ name: '', email: '', message: '' });
+    
+    const subject = encodeURIComponent(`رسالة من ${formData.name}`);
+    const body = encodeURIComponent(`الاسم: ${formData.name}\nالإيميل: ${formData.email}\n\nالرسالة:\n${formData.message}`);
+    
+    window.location.href = `mailto:minaboules@consultant.com?subject=${subject}&body=${body}`;
+    
+    toast.success('جاري فتح تطبيق البريد...');
   };
 
   const contactInfo = [
