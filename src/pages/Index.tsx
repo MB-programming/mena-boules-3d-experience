@@ -7,7 +7,7 @@ import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
 import AboutSection from '../components/AboutSection';
 import SkillsSection from '../components/SkillsSection';
-import CoursesSection from '../components/CoursesSection';
+
 import ContactSection from '../components/ContactSection';
 import Footer from '../components/Footer';
 import { LanguageProvider, useLanguage } from '../contexts/LanguageContext';
@@ -175,7 +175,7 @@ const Index = () => {
             </div>
           </section>
 
-          <CoursesSection />
+          
           <ContactSection />
         </main>
         <Footer />
