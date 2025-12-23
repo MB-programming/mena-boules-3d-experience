@@ -11,11 +11,9 @@ import ResetPassword from "./pages/ResetPassword";
 import Profile from "./pages/Profile";
 import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
-import Services from "./pages/Services";
+
 import About from "./pages/About";
 import Checkout from "./pages/Checkout";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
 import Certificate from "./pages/Certificate";
 import VerifyCertificate from "./pages/VerifyCertificate";
 import Quotation from "./pages/Quotation";
@@ -38,11 +36,9 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/project/:slug" element={<ProjectDetail />} />
-            <Route path="/services" element={<Services />} />
+            
             <Route path="/about" element={<About />} />
             <Route path="/checkout" element={<Checkout />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/certificate/:id" element={<Certificate />} />
             <Route path="/verify" element={<VerifyCertificate />} />
             <Route path="/quotation/:id" element={<Quotation />} />

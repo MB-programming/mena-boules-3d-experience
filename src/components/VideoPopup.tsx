@@ -8,7 +8,7 @@ interface VideoPopupProps {
   videoUrl?: string;
 }
 
-const VideoPopup = ({ isOpen, onClose, videoUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }: VideoPopupProps) => {
+const VideoPopup = ({ isOpen, onClose, videoUrl = 'https://www.youtube.com/embed/ZQObK6XkGHE?autoplay=1' }: VideoPopupProps) => {
   const [isPlaying, setIsPlaying] = useState(true);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -45,13 +45,11 @@ const VideoPopup = ({ isOpen, onClose, videoUrl = 'https://commondatastorage.goo
             </motion.button>
 
             {/* Video */}
-            <video
+            <iframe
               src={videoUrl}
-              autoPlay
-              controls
-              className="w-full h-full object-contain"
-              onPlay={() => setIsPlaying(true)}
-              onPause={() => setIsPlaying(false)}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full"
             />
           </motion.div>
         </motion.div>
